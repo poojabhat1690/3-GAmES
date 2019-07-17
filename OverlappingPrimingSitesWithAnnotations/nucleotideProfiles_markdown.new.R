@@ -1,4 +1,106 @@
 
+## reading in annotations
+
+## this is used for making nucleotide profiles to differnetiate between false and true positive sites.
+
+if(require("checkmate")){
+	  print("checkmate is loaded correctly")
+} else {
+	  print("trying to install checkmate")
+  install.packages("checkmate")
+    if(require(checkmate)){
+	        print("checkmate installed and loaded")
+    } else {
+	        stop("could not install checkmate")
+      }
+}
+ 
+
+if(require("ggplot2")){
+	  print("ggplot2 is loaded correctly")
+} else {
+	  print("trying to install ggplot2")
+  install.packages("ggplot2")
+    if(require(ggplot2)){
+	        print("ggplot2 installed and loaded")
+    } else {
+	        stop("could not install ggplot2")
+      }
+}
+
+if(require("reshape")){
+	  print("reshape is loaded correctly")
+} else {
+	  print("trying to install reshape")
+  install.packages("reshape")
+    if(require(reshape)){
+	        print("reshape installed and loaded")
+    } else {
+	        stop("could not install reshape")
+      }
+}
+
+if(require("Biostrings")){
+	  print("Biostrings is loaded correctly")
+} else {
+	  print("trying to install Biostrings")
+  BiocManager::install("Biostrings",ask=FALSE )
+    if(require(Biostrings)){
+	        print("Biostrings installed and loaded")
+    } else {
+	        stop("could not install Biostrings")
+      }
+}
+
+
+if(require("GenomicRanges")){
+	  print("GenomicRanges is loaded correctly")
+} else {
+	  print("trying to install GenomicRanges")
+  BiocManager::install("GenomicRanges",ask=FALSE )
+    if(require(GenomicRanges)){
+	        print("GenomicRanges installed and loaded")
+    } else {
+	        stop("could not install GenomicRanges")
+      }
+}
+
+
+if(require("biomaRt")){
+	  print("biomaRt is loaded correctly")
+} else {
+	  print("trying to install biomaRt")
+  BiocManager::install("biomaRt",ask=FALSE )
+    if(require(biomaRt)){
+	        print("biomaRt installed and loaded")
+    } else {
+	        stop("could not install biomaRt")
+      }
+}
+
+if(require("dplyr")){
+	  print("dplyr is loaded correctly")
+} else {
+	  print("trying to install dplyr")
+  install.packages("dplyr")
+    if(require(dplyr)){
+	        print("dplyr installed and loaded")
+    } else {
+	        stop("could not install dplyr")
+      }
+}
+
+if(require("tibble")){
+	  print("tibble is loaded correctly")
+} else {
+	  print("trying to install tibble")
+  install.packages("tibble")
+    if(require(tibble)){
+	        print("tibble installed and loaded")
+    } else {
+	        stop("could not install tibble")
+      }
+}
 
 
 
