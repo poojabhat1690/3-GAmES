@@ -25,24 +25,13 @@ module load r/3.5.1-foss-2017a-x11-20170314-bare
 module load java/1.8.0_121
 module load singularity/2.5.2 
 
-PIPELINE=/groups/ameres/Pooja/Projects/refiningPipeline/pipeline/
 
-#### this pipeline used SLAMdunk for mapping quantSeq datasets - SLAMdunk is available as a singulatity module on docker.   
-######## checking if the module exists in the folder, if not pulling it from docker. 
-
-FILE="$PIPELINE"/slamdunk-v0.3.4.simg
-
-if [ -f "$FILE" ]; then
-	    echo "$FILE exist"
-    else 
-	        echo "$FILE does not exist"
-	fi
 
 
 
 ### reading in the variables passed in the command line... 
 
-while getopts 'a: i: o: g: t: u: e: m: c:' OPTION; do
+while getopts 'a: i: o: g: t: u: e: m: c: p:' OPTION; do
 	  case "$OPTION" in
 		      a)
 			      avalue="$OPTARG"
@@ -86,10 +75,13 @@ while getopts 'a: i: o: g: t: u: e: m: c:' OPTION; do
 								Condition="$OPTARG"
 								echo "the condition is $OPTARG"
 								;;
-					
+							p)
+								PIPELINE="$OPTARG"
+								echo "the pipeline to be used is in $OPTARG"
+								;;
 
 					  			  ?)
-										 echo "script usage: $(basename $0) [-a adapter] [-i input directory] [-o output directory] [-g genome file] [-t threshold for priming sites] [-u ucscDir] [-e ensemblDir] [-m mode rnadeq p/s/S] [-c condition]" >&2
+										 echo "script usage: $(basename $0) [-a adapter] [-i input directory] [-o output directory] [-g genome file] [-t threshold for priming sites] [-u ucscDir] [-e ensemblDir] [-m mode rnadeq p/s/S] [-c condition] [-p path to pipeline]" >&2
 														        exit 1
 															      ;;
 															        esac
@@ -132,6 +124,7 @@ mkdir -p "$QUANT_PASPLOTS"
 mkdir -p "$QUANT_INTERGENIC"
 mkdir -p $ovalue/ExtendingINtergenicRegions
 mkdir -p $ovalue/coverage
+
 
 
 
@@ -422,6 +415,5 @@ rm $ovalue/coverage/*
 	Rscript --slave -e "BIn='$ivalue'; BOut='$ovalue'; ucscDir='$ucscdir'; ensemblDir='$ensembldir';source('$rmd')"
 
 	Rscript --vanilla -e "BIn='$ivalue'; BOut='$ovalue'; ucscDir='$ucscdir'; ensemblDir='$ensembldir'; source('$PIPELINE/90PercentFiltering_merging_countingWindows/mergingCounting.new.R')"
-
 
 
