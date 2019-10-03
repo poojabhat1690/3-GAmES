@@ -11,10 +11,10 @@
 git clone https://github.com/poojabhat1690/refine-pipeline.git
 cd pipeline/pre-processing/
 
-##### dependencies. 
-
-please load modules/software that are listed in the file : 
-
+All dependencies required for 3' GAmES are provided as 3 separate singularity modules. 
+ 1. all dependencies 
+ 2. R and R packages required
+ 3. slamdunk
 
 ## Quickstart
 
