@@ -1,4 +1,4 @@
-# 3'GAmES
+# 3'GAmES (3´-terminal Gene Annotation from mRNA 3´End Sequencing datasets)
 
 3' GAmES is a pipeline to refine and extend mRNA 3' end annotations using 3' end sequencing datasets. The details of the pipeline are in the figure below. 
 ![Flowchart 3'GAmES](flowchart.pdf)
@@ -11,12 +11,17 @@
 git clone https://github.com/poojabhat1690/refine-pipeline.git
 cd pipeline/pre-processing/
 
-##### dependencies. 
-
-please load modules/software that are listed in the file : 
-
+All dependencies required for 3' GAmES are provided as 3 separate singularity modules. 
+ 1. all dependencies 
+ 2. R and R packages required
+ 3. slamdunk
+Please make sure the singularity version you have is > 3.0. 
 
 ## Quickstart
+
+To start, 3' GAmES requrires the dependecies as singularity images and an annotation set from refSeq and ENSEMBL. 
+
+the annotations can be prepared as described below. 
 
 Please make sure to download annotations and format them before running this script (examples for annotations for mouse version mm10 and zebrafish version dr11 are here : ). Steps to obtaining an formatting the annotation for your favourite organism can be found below. 
 
@@ -64,6 +69,10 @@ for 3' UTR annotations from UCSC genome browser (refSeq_mm10_3primeUTR.bed)
       
    Also download the intron, exon and refFlat annotations from the ucsc genome browser. Further processing has been done using the script : pipeline/pre-processing/getAnnotations.Rmd
      
+
+
+ ### Annotations from ENSEMBL:
+ Can be downloaded as a gff file from ensembl and processed. 
 
  #### Annotations from ENSEMBL retreived from biomaRt
  
