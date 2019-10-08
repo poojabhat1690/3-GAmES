@@ -1,10 +1,10 @@
 # 3'GAmES (3´-terminal Gene Annotation from mRNA 3´End Sequencing datasets)
+3' GAmES is a pipeline to refine and extend mRNA 3' end annotations using 3' end sequencing datasets. 
 
-3' GAmES is a pipeline to refine and extend mRNA 3' end annotations using 3' end sequencing datasets. The details of the pipeline are in the figure below. 
-![Flowchart 3'GAmES](flowchart.pdf)
+## Author
+Pooja Bhat (pooja.bhat@imba.oeaw.ac.at)
 
-
-## Installation
+## Installation (change this). 
 
 #### Clone from github
 
@@ -19,11 +19,31 @@ Please make sure the singularity version you have is > 3.0.
 
 ## Quickstart
 
+### Annotations required
 To start, 3' GAmES requrires the dependecies as singularity images and an annotation set from refSeq and ENSEMBL. 
 
-the annotations can be prepared as described below. 
+6 different annotation files are required. Please reatain the file names as below.
+	1. refSeq_mrna_utrsPresent.bed - refSeq 3' UTR annotations  
+	2. proteinCoding_annotatedUTRs.bed - ENSEMBL 3' UTR annotations 
+	3. exonInfo_proteinCodingGenes.bed - ENSEMBL exon annotations 
+	4. intronInfo_proteinCodingGenes.bed - ENSEMBL intron annotations 
+	
+The annotations should be tab separated and have the following columns : chromosome, start, end , geneName, score, strand, transcript id. 
+One way to obtain the annotations is from the UCSC table browser.
 
-Please make sure to download annotations and format them before running this script (examples for annotations for mouse version mm10 and zebrafish version dr11 are here : ). Steps to obtaining an formatting the annotation for your favourite organism can be found below. 
+	For example:
+		
+	for 3' UTR annotations from (refSeq) UCSC genome browser                                                                                                                                    
+             1. Form UCSC table browser, select:
+                a. clade = mammal 
+                b. genome = mouse
+                c. assembly = Dec. 2011 (GRCm38/mm10)
+                d. group = genes and gene prediction
+                e. track = refSeq genes
+                f. table = refGene
+              2. select bed format and 3' UTR. 
+
+### Running 3'GAmES
 
 The script required to run the whole pipeline is beforeMapping.new.sh
 
@@ -52,12 +72,11 @@ beforeMapping.new.sh -a [adapter] -i [input directory] -o [output directory] -g 
                 
  ## Prerequisites: 
 
-3Eseq requires intron, exon, 3' UTR annotations from refSeq and ENSEMBL. The following should help guide you through the procedure to get these annotations. 
 
 
 #### Annotations from refSeq, downloaded from the UCSC table browser manually. 
 
-for 3' UTR annotations from UCSC genome browser (refSeq_mm10_3primeUTR.bed) 
+for 3' UTR annotations from UCSC genome browser 
              1. Form UCSC table browser, select:
                 a. clade = mammal 
                 b. genome = mouse
@@ -67,25 +86,8 @@ for 3' UTR annotations from UCSC genome browser (refSeq_mm10_3primeUTR.bed)
                 f. table = refGene
               2. select bed format and 3' UTR. 
       
-   Also download the intron, exon and refFlat annotations from the ucsc genome browser. Further processing has been done using the script : pipeline/pre-processing/getAnnotations.Rmd
+
      
-
-
- ### Annotations from ENSEMBL:
- Can be downloaded as a gff file from ensembl and processed. 
-
- #### Annotations from ENSEMBL retreived from biomaRt
- 
-Ensembl annotations were retrieved from biomart, using RStudio using the script pipeline/pre-processing/getAnnotations.Rmd
-processing ensembl annotations 
-1. get only protein coding genes based on transcript biotype : allTranscripts_proteinCoding.txt .
-2. get protein coding genes with annotated 3' UTRs : proteinCoding_annotatedUTRs.txt
-3. protein coding genes with un annotated 3' UTRs : proteinCoding_UnannotatedUTRs.txt
-        
-An example of the annotations required are provided in testdata/mm10. As of now 3' GAmES works with ensembl and refSeq annotations.
- 
-
-
  
 ## Output description
 The ouput and all intermediate files are organized in the follwing folders:
