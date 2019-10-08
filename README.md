@@ -19,7 +19,9 @@ Please make sure the singularity version you have is > 3.0.
 
 ## Quickstart
  the main steps involved in the pipline are outlined : 
-[Contribution guidelines for this project](primingSites/flowchart.pdf)
+[The main steps of the pipeline are outlined here](primingSites/flowchart.pdf).
+A description of the different steps outlined can be found in the wiki.
+
 ### Annotations required
 To start, 3' GAmES requrires the dependecies as singularity images and an annotation set from refSeq and ENSEMBL. 
 
@@ -52,27 +54,24 @@ beforeMapping.new.sh -a [adapter] -i [input directory] -o [output directory] -g 
 -u [ucscDir] -e [ensemblDir] -m [mode rnaseq p/s/S] -c [condition]
  
  
- -a 3' adapter sequences that has to be removed using cutadapt
+ 	-a 3' adapter sequences that has to be removed using cutadapt
  
- -i input directory containing two folders named - quantseq, rnaseq
+ 	-i input directory containing two folders named - quantseq, rnaseq
                    quantseq: contains *.fastq, *.fq.gz, *fq  files. 
                    rnaseq: mapped, sorted and indexed bam files. 
  
- -o Output directory
+ 	-o Output directory
  
- -t threshold of the number of reads to define a priming site.
+ 	-t threshold of the number of reads to define a priming site.
  
- -u ucsc directory containing annotations downloaded from ucsc table browser. 
+ 	-u ucsc directory containing annotations downloaded from ucsc table browser. 
  
- -e ensembl directory containing ensembl annotations ontained from biomart. 
+ 	-e ensembl directory containing ensembl annotations ontained from biomart. 
  
- -m mode of counting for RNAseq coverage, derived from bedtools multicov (s: counting on the same strand, 
+ 	-m mode of counting for RNAseq coverage, derived from bedtools multicov (s: counting on the same strand, 
             p: paired end reads, S: counting on the opposite strand
  
- -c condition of sample (example: timepoint or organism)
-                
- ## Prerequisites: 
-
+ 	-c condition of sample (example: timepoint or organism)
 
 
 #### Annotations from refSeq, downloaded from the UCSC table browser manually. 
