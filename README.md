@@ -18,7 +18,8 @@ All dependencies required for 3' GAmES are provided as 3 separate singularity mo
 Please make sure the singularity version you have is > 3.0. 
 
 ## Quickstart
-
+ the main steps involved in the pipline are outlined : 
+[Contribution guidelines for this project](primingSites/flowchart.pdf)
 ### Annotations required
 To start, 3' GAmES requrires the dependecies as singularity images and an annotation set from refSeq and ENSEMBL. 
 
@@ -87,27 +88,19 @@ for 3' UTR annotations from UCSC genome browser
               2. select bed format and 3' UTR. 
       
 
-     
- 
 ## Output description
-The ouput and all intermediate files are organized in the follwing folders:
+The final ouput and all intermediate files are organized in the follwing folders:
 
 #### final90percent :
  1. ends_greater90percent_intergenic_n100 :  contains the high condience mRNA 3' ends 
  2. allAnnotations.bed :  250nt counting windows (overlapping counting windows merged), used to count quantSeq reads.
- 3. countingWindows_transcriptionalOutput.bed : genomic loci to filter multimappers using SLAMdunk. These include all counting windows + all 3' UTRs + all extended counting windows. 
- 4. onlyIntergenic_90percent_n100: list of the intergenic counting windows created using presence of continuous RNAseq signal.
-
-#### polyAmapping_allTimepoints : contains raw files of the pre-processing steps
- 1. including adapter trimmed, poly(A) tail filtered fastq files, mapped files
- 2. priming sites
- 3. priming sites overalapping with different annotations (ENSEMBL 3' UTRs, refSeq 3' UTRs, ENSEMBL introns, ENSEMBL exons, nonOverlapping). 
+ 3. countingWindows_transcriptionalOutput.bed : genomic loci to filter multimappers using SLAMdunk. These include all counting windows + all 3' UTRs + all extended counting windows. 4. onlyIntergenic_90percent_n100: list of the intergenic counting windows created using presence of continuous RNAseq signal.
 
 #### PASplots :
  contains nucleotide profiles for priming sites overlapping with annotations, sparated by presence or absence of the poly A signal (PAS) and separated by downstream genomic A content. 
 
-#### coverage : 
- contains list of priming sites (filterd for low genomic A content), that overlap with un-annotated regions supported by RNAseq. 
+
+
         
 
 
