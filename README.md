@@ -1,37 +1,39 @@
 # 3'GAmES (3´-terminal Gene Annotation from mRNA 3´End Sequencing datasets)
 3' GAmES is a pipeline to refine and extend mRNA 3' end annotations using 3' end sequencing datasets. 
 
-## Author
-Pooja Bhat (pooja.bhat@imba.oeaw.ac.at)
-
-## Installation (change this). 
+## Installation 
 
 #### Clone from github
 
 git clone https://github.com/poojabhat1690/refine-pipeline.git
 cd pipeline/pre-processing/
 
-All dependencies required for 3' GAmES are provided as 3 separate singularity modules. 
- 1. all dependencies 
- 2. R and R packages required
- 3. slamdunk
 Please make sure the singularity version you have is > 3.0. 
+	cd 3GAmES/bin
+	run the script "getDependencies.sh"
+
+	
+
 
 ## Quickstart
- the main steps involved in the pipline are outlined : 
+
+
+
+
+the main steps involved in the pipline are outlined : 
 [The main steps of the pipeline are outlined here](primingSites/flowchart.pdf).
 A description of the different steps outlined can be found in the wiki.
 
 ### Annotations required
 To start, 3' GAmES requrires the dependecies as singularity images and an annotation set from refSeq and ENSEMBL. 
 
-6 different annotation files are required. Please reatain the file names as below.
+4 different annotation files are required. Please reatain the file names as below.
 	1. refSeq_mrna_utrsPresent.bed - refSeq 3' UTR annotations  
 	2. proteinCoding_annotatedUTRs.bed - ENSEMBL 3' UTR annotations 
 	3. exonInfo_proteinCodingGenes.bed - ENSEMBL exon annotations 
 	4. intronInfo_proteinCodingGenes.bed - ENSEMBL intron annotations 
 	
-The annotations should be tab separated and have the following columns : chromosome, start, end , geneName, score, strand, transcript id. 
+The annotations should be tab separated and should contain the following information (without column headers): chromosome, start, end , geneName, score, strand, transcript id
 One way to obtain the annotations is from the UCSC table browser.
 
 	For example:
@@ -48,10 +50,10 @@ One way to obtain the annotations is from the UCSC table browser.
 
 ### Running 3'GAmES
 
-The script required to run the whole pipeline is beforeMapping.new.sh
+The script required to run the whole pipeline is run_3GAmES.sh
 
-beforeMapping.new.sh -a [adapter] -i [input directory] -o [output directory] -g [genome file] -t [threshold for priming sites]
--u [ucscDir] -e [ensemblDir] -m [mode rnaseq p/s/S] -c [condition]
+run_3GAmES.sh -a [adapter] -i [input directory] -o [output directory] -g [genome file] -t [threshold for priming sites]
+-u [ucscDir] -e [ensemblDir] -m [mode rnaseq p/s/S] -c [condition] -p [path]
  
  
  	-a 3' adapter sequences that has to be removed using cutadapt
@@ -72,6 +74,8 @@ beforeMapping.new.sh -a [adapter] -i [input directory] -o [output directory] -g 
             p: paired end reads, S: counting on the opposite strand
  
  	-c condition of sample (example: timepoint or organism)
+	
+	-p link to the 3GAmES folder
 
 
 #### Annotations from refSeq, downloaded from the UCSC table browser manually. 
@@ -93,13 +97,15 @@ The final ouput and all intermediate files are organized in the follwing folders
 #### final90percent :
  1. ends_greater90percent_intergenic_n100 :  contains the high condience mRNA 3' ends 
  2. allAnnotations.bed :  250nt counting windows (overlapping counting windows merged), used to count quantSeq reads.
- 3. countingWindows_transcriptionalOutput.bed : genomic loci to filter multimappers using SLAMdunk. These include all counting windows + all 3' UTRs + all extended counting windows. 4. onlyIntergenic_90percent_n100: list of the intergenic counting windows created using presence of continuous RNAseq signal.
+ 3. countingWindows_transcriptionalOutput.bed : genomic loci to filter multimappers using SLAMdunk. These include all counting windows + all 3' UTRs + all extended counting windows. 
+ 4. onlyIntergenic_90percent_n100: list of the intergenic counting windows created using presence of continuous RNAseq signal.
 
 #### PASplots :
  contains nucleotide profiles for priming sites overlapping with annotations, sparated by presence or absence of the poly A signal (PAS) and separated by downstream genomic A content. 
 
 
 
-        
+## Contact
+Pooja Bhat (pooja.bhat@imba.oeaw.ac.at)        
 
 
