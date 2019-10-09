@@ -3,26 +3,24 @@
 
 ## Installation 
 
-#### Clone from github
+### Clone from github
 
-git clone https://github.com/poojabhat1690/refine-pipeline.git
-cd pipeline/pre-processing/
+git clone https://github.com/poojabhat1690/3-GAmES.git
 
 Please make sure the singularity version you have is > 3.0. 
+
 	cd 3GAmES/bin
 	run the script "getDependencies.sh"
 
-	
-
-
-## Quickstart
-
-
-
-
-the main steps involved in the pipline are outlined : 
+## Description
+the main steps involved in the pipline are outlined :
 [The main steps of the pipeline are outlined here](primingSites/flowchart.pdf).
 A description of the different steps outlined can be found in the wiki.
+
+
+
+## Requirements
+	After cloning 3'GAmES and pulling the dependencies, the last thing required are ENSEMBL and refSeq annotations... 
 
 ### Annotations required
 To start, 3' GAmES requrires the dependecies as singularity images and an annotation set from refSeq and ENSEMBL. 
@@ -48,7 +46,7 @@ One way to obtain the annotations is from the UCSC table browser.
                 f. table = refGene
               2. select bed format and 3' UTR. 
 
-### Running 3'GAmES
+## Wuick start -  Running 3'GAmES
 
 The script required to run the whole pipeline is run_3GAmES.sh
 
@@ -78,18 +76,6 @@ run_3GAmES.sh -a [adapter] -i [input directory] -o [output directory] -g [genome
 	-p link to the 3GAmES folder
 
 
-#### Annotations from refSeq, downloaded from the UCSC table browser manually. 
-
-for 3' UTR annotations from UCSC genome browser 
-             1. Form UCSC table browser, select:
-                a. clade = mammal 
-                b. genome = mouse
-                c. assembly = Dec. 2011 (GRCm38/mm10)
-                d. group = genes and gene prediction
-                e. track = refSeq genes
-                f. table = refGene
-              2. select bed format and 3' UTR. 
-      
 
 ## Output description
 The final ouput and all intermediate files are organized in the follwing folders:
