@@ -2,9 +2,9 @@
 
 ## this is used for making nucleotide profiles to differnetiate between false and true positive sites.
 
-cat("loading packages")
-source("https://bioconductor.org/biocLite.R")
-BiocInstaller::biocLite(c("Biostrings", "biomaRt"),ask=FALSE)
+
+
+
 
 library(checkmate)
 library(Biostrings)

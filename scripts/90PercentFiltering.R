@@ -18,7 +18,7 @@ library(checkmate)
 ## readin in peaks, intergenic, refSeq and all other ends
 
 
-intergenicPeaks = read.table(paste0(BOut, "/coverage/allIntergenicPeaks_n100_new.txt"),sep="\t",stringsAsFactors = F,header = F)
+intergenicPeaks = read.table(paste0(BOut, "/ExtendingINtergenicRegions/allIntergenicPeaks_n100_new.txt"),sep="\t",stringsAsFactors = F,header = F)
 #assertDataFrame(intergenicPeaks,ncols = 26)
 
 ends_all= read.delim(paste0(BOut, "/polyAmapping_allTimepoints/n_100_global_a0/ends_all_10threshold_n100.txt"),stringsAsFactors = F,header=T)
