@@ -33,7 +33,8 @@ To start, 3' GAmES requrires the dependecies as singularity images and an annota
 	4. intronInfo_proteinCodingGenes.bed - ENSEMBL intron annotations 
 	5. transcriptStartsAndEnds_all.txt - ensembl transcript annotation  	
 
-All the annotations should be tab separated and should contain the following information (without column headers): chromosome, start, end , geneName, score, strand, transcript id
+All the annotations should be tab separated and should contain the following information (without column headers): chromosome, start, end , geneName, score, strand, transcript id.
+
 Please also include the transcript biotype (protein coding, non-coding etc) as the 8th column of  transcriptStartsAndEnds_all.txt
 
 
