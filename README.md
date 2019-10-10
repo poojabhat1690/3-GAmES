@@ -86,11 +86,11 @@ run_3GAmES.sh -a [adapter] -i [input directory] -o [output directory] -g [genome
 ## Output description
 The final ouput and all intermediate files are organized in the follwing folders:
 
-#### final90percent :
- 1. ends_greater90percent_intergenic_n100 :  contains the high condience mRNA 3' ends 
- 2. allAnnotations.bed :  250nt counting windows (overlapping counting windows merged), used to count quantSeq reads.
+#### finalEnds
+ 1. highConfidenceEnds.bed :  contains the high condience mRNA 3' ends 
+ 2. countingWindows.bed :  250nt counting windows (overlapping counting windows merged), used to count quantSeq reads.
  3. countingWindows_transcriptionalOutput.bed : genomic loci to filter multimappers using SLAMdunk. These include all counting windows + all 3' UTRs + all extended counting windows. 
- 4. onlyIntergenic_90percent_n100: list of the intergenic counting windows created using presence of continuous RNAseq signal.
+ 4. highConfidenceIntergenicEnds.bed: list of the intergenic counting windows created using presence of continuous RNAseq signal.
 
 #### PASplots :
  contains nucleotide profiles for priming sites overlapping with annotations, sparated by presence or absence of the poly A signal (PAS) and separated by downstream genomic A content. 
