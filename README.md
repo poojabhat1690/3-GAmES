@@ -25,14 +25,18 @@ A description of the different steps outlined can be found in the wiki.
 ### Annotations required
 To start, 3' GAmES requrires the dependecies as singularity images and an annotation set from refSeq and ENSEMBL. 
 
-4 different annotation files are required. Please reatain the file names as below.
+5 different annotation files are required. Please reatain the file names as below.
 	1. refSeq_mrna_utrsPresent.bed - refSeq 3' UTR annotations  
 	2. proteinCoding_annotatedUTRs.bed - ENSEMBL 3' UTR annotations 
 	3. exonInfo_proteinCodingGenes.bed - ENSEMBL exon annotations 
 	4. intronInfo_proteinCodingGenes.bed - ENSEMBL intron annotations 
-	
-The annotations should be tab separated and should contain the following information (without column headers): chromosome, start, end , geneName, score, strand, transcript id
-One way to obtain the annotations is from the UCSC table browser.
+	5. transcriptStartsAndEnds_all.txt - ensembl transcript annotation  	
+
+All the annotations should be tab separated and should contain the following information (without column headers): chromosome, start, end , geneName, score, strand, transcript id
+Please also include the transcript biotype (protein coding, non-coding etc) as the 8th column of  transcriptStartsAndEnds_all.txt
+
+
+All the above annotations can be obtained from the UCSC table browser:
 
 	For example:
 		
@@ -46,9 +50,9 @@ One way to obtain the annotations is from the UCSC table browser.
                 f. table = refGene
               2. select bed format and 3' UTR. 
 
-## Wuick start -  Running 3'GAmES
+## Quick start -  Running 3'GAmES
 
-The script required to run the whole pipeline is run_3GAmES.sh
+The script required to run the whole pipeline is run_3GAmES.sh. You will find this in the 3GAmES/bin/
 
 run_3GAmES.sh -a [adapter] -i [input directory] -o [output directory] -g [genome file] -t [threshold for priming sites]
 -u [ucscDir] -e [ensemblDir] -m [mode rnaseq p/s/S] -c [condition] -p [path]
