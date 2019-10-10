@@ -1,20 +1,9 @@
-#!/usr/bin/env bash
-#SBATCH --nodes=1
-#SBATCH --ntasks=1
-##SBATCH --cpus-per-task=7
-#SBATCH --mem-per-cpu=100G
-#SBATCH --time=0-24:00:00     # 2 minutes
-#SBATCH --job-name=3GAmES
-####SBATCH --array=1-4
-#SBATCH --mail-type=ALL
-#SBATCH --mail-user=pooja.bhat@imba.oeaw.ac.at
-#SBATCH  --qos=long
-
+#!/bin/bash
 
 #### load singularity ... required version > 3.0
-module load singularity/3.2.1
+#module load singularity/3.2.1
 
-
+command -v singularity >/dev/null 2>&1 || { echo >&2 "3' GAmES requires singularity version > 3.0, please load this and try again."; exit 1; }
 
 
 
@@ -35,7 +24,7 @@ while getopts 'a: i: o: g: t: u: e: m: c: p:' OPTION; do
 										
 							o) 
 								ovalue="$OPTARG"
-								echo "the output dorectory is $OPTARG"
+								echo "the output directory is $OPTARG"
 									;;
 
 							
