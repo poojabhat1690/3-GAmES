@@ -20,7 +20,7 @@ A description of the different steps outlined can be found in the wiki.
 
 
 ## Requirements
-	After cloning 3'GAmES and pulling the dependencies, the last thing required are ENSEMBL and refSeq annotations... 
+After cloning 3'GAmES and pulling the dependencies, the last thing required are ENSEMBL and refSeq annotations... 
 
 ### Annotations required
 To start, 3' GAmES requrires the dependecies as singularity images and an annotation set from refSeq and ENSEMBL. 
