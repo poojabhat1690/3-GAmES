@@ -9,7 +9,7 @@ git clone https://github.com/poojabhat1690/3-GAmES.git
 
 Please make sure the singularity version you have is > 3.0. 
 
-	cd 3GAmES/bin
+	cd 3-GAmES/bin
 	run the script "getDependencies.sh"
 
 ## Description
@@ -79,7 +79,7 @@ run_3GAmES.sh -a [adapter] -i [input directory] -o [output directory] -g [genome
  
  	-c condition of sample (example: timepoint or organism)
 	
-	-p link to the 3GAmES folder
+	-p path  to the 3-GAmES folder
 
 
 
