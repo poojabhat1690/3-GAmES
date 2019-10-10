@@ -26,6 +26,7 @@ A description of the different steps outlined can be found in the wiki.
 To start, 3' GAmES requrires the dependecies as singularity images and an annotation set from refSeq and ENSEMBL. 
 
 5 different annotation files are required. Please reatain the file names as below.
+
 	1. refSeq_mrna_utrsPresent.bed - refSeq 3' UTR annotations  
 	2. proteinCoding_annotatedUTRs.bed - ENSEMBL 3' UTR annotations 
 	3. exonInfo_proteinCodingGenes.bed - ENSEMBL exon annotations 
