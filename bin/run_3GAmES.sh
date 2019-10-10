@@ -407,7 +407,7 @@ while read index; do
 	
 	singularity exec "$PIPELINE"/bin/dependencies_latest.sif fastx_trimmer -Q33 -f 13 -m 1 -i "$OUTDIR"/"$index"_trimmed_emptyRemoved.fastq   > "$OUTDIR"/"$index"_5primetrimmed_trimmed.fastq 2>"$LOG"/stderr_"$index".txt 
 	
-	fivePrimeTrimmed=$(cat  "$OUTDIR"/"$index"_5primetrimmed_trimmed.fastq | echo $((`wc -l`/4)))                                                                                    
+	#fivePrimeTrimmed=$(cat  "$OUTDIR"/"$index"_5primetrimmed_trimmed.fastq | echo $((`wc -l`/4)))                                                                                    
 	echo number of reads after 5 trimmig "$fivePrimeTrimmed" >>"$LOG"/stdo_"$index".txt
 	echo "retaining reads that have >=5 As the the 3 end" >>"$LOG"/stdo_"$index".txt
 
@@ -537,14 +537,15 @@ printf "\n" >> "$ovalue"/"$Condition".txt
 
  	singularity exec "$PIPELINE"/bin/dependencies_latest.sif  Rscript  --vanilla $PIPELINE/scripts/overlappingPolyApeaks.R "$QUANT_MAP"/polyAreads_polyAremoved_pooled_slamdunk_mapped_filtered_bamTobed_plusStrand_countsUnique_greaterThan"$threshold".bed_sorted_merged.bed "$QUANT_MAP"/polyAreads_polyAremoved_pooled_slamdunk_mapped_filtered_bamTobed_minusStrand_countsUnique_greaterThan"$threshold".bed_sorted_merged.bed "$QUANT_MAP"/peaks_"$threshold"_120bps.bed "$QUANT_MAP"/sizes.genome
 
+	
 
-	singularity exec "$PIPELINE"/bin/dependencies_latest.sif  bedtools getfasta -s -fi $genome -bed "$QUANT_MAP"/peaks_"$threshold"_120bps.bed -fo "$QUANT_MAP"/peaks_"$threshold"_120bps.fa 2>"$LOG"/stderr_"$index".txt 
+singularity exec "$PIPELINE"/bin/dependencies_latest.sif  bedtools getfasta -s -fi $genome -bed "$QUANT_MAP"/peaks_"$threshold"_120bps.bed -fo "$QUANT_MAP"/peaks_"$threshold"_120bps.fa 2>"$LOG"/stderr_"$index".txt 
 
 #### getting sequences in the 120 nucleotide window
 
 rmd="$PIPELINE/scripts/sequencesForNucleotideProfile.R"
 
-singularity exec "$PIPELINE"/bin/dependencies_latest.sif  Rscript --vanilla -e "InPath='$QUANT_MAP';threshold="$threshold";source('$rmd')"
+	singularity exec "$PIPELINE"/bin/dependencies_latest.sif  Rscript --vanilla -e "InPath='$QUANT_MAP';threshold="$threshold";source('$rmd')"
 
 #####################
 #### creating nucleotie profile plots...

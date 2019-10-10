@@ -32,7 +32,7 @@ library(tibble)
 
 
 
-source(paste0(PPath, "/OverlappingPrimingSitesWithAnnotations/overlappingHierarchical.R"))
+source(paste0(PPath, "/scripts/overlappingHierarchical.R"))
 
 ###reading in the annotations
 #FIXME no absolute dirs
