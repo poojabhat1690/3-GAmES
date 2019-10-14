@@ -155,7 +155,7 @@ date >"$ovalue"/"$Condition".txt
 	### creatig a genome size file, required for further steps....
 
 
-	singularity exec /groups/ameres/Pooja/dependencies.sif /usr/bin/samtools-1.9/samtools faidx "$genome" -o  "$QUANT_MAP"/"$genome".fai 
+	singularity exec "$PIPELINE"/bin/dependencies_latest.sif samtools  faidx "$genome" -o  "$QUANT_MAP"/"$genome".fai 
 	cut -f1,2 "$genome".fai > "$QUANT_MAP"/sizes.genome
 
 
@@ -382,10 +382,6 @@ while read index; do
 	
 	sed 's/^$/N/' "$OUTDIR"/"$index"_trimmed.fastq > "$OUTDIR"/"$index"_trimmed_emptyRemoved.fastq
 
-	### QC  
-	
-
-	singularity exec "$PIPELINE"/bin/dependencies_latest.sif  fastqc "$OUTDIR"/"$index"_trimmed.fastq 
 	
 	#####################################################################
 	############# trimming 5' end 
@@ -618,29 +614,29 @@ source $PIPELINE/scripts/intergenicPeakId.sh
 
 ##### pre-processing data...
 
-mkdir -p $ovalue/pre-processingLogs
-cp "$ovalue"/polyAmapping_allTimepoints/logs/*  $ovalue/pre-processingLogs/
-rm -r "$ovalue"/polyAmapping_allTimepoints
+#mkdir -p $ovalue/pre-processingLogs
+#cp "$ovalue"/polyAmapping_allTimepoints/logs/*  $ovalue/pre-processingLogs/
+#rm -r "$ovalue"/polyAmapping_allTimepoints
 
 ##### coverage (redundant - not used anymore)
-rm -r "$ovalue"/coverage
-rm -r "$ovalue"/intergenicPeaks
-rm -r "$ovalue"/ExtendingINtergenicRegions
+#rm -r "$ovalue"/coverage
+#rm -r "$ovalue"/intergenicPeaks
+#rm -r "$ovalue"/ExtendingINtergenicRegions
 
 
 #### final 3' end annotations
-mkdir -p $ovalue/finalEnds
-cp "$ovalue"/final90percent/ends_greater90percent_intergenic_n100.bed "$ovalue"/finalEnds/highConfidenceEnds.bed
-cp "$ovalue"/final90percent/allAnnotations.bed "$ovalue"/finalEnds/countingWindows.bed
-cp "$ovalue"/final90percent/countingWindows_transcriptionalOutput.bed "$ovalue"/finalEnds/countingWindows_transcriptionalOutput.bed
-cp "$ovalue"/final90percent/onlyIntergenic_90percent_n100.bed "$ovalue"/finalEnds/highConfidenceIntergenicEnds.bed
+#mkdir -p $ovalue/finalEnds
+#cp "$ovalue"/final90percent/ends_greater90percent_intergenic_n100.bed "$ovalue"/finalEnds/highConfidenceEnds.bed
+#cp "$ovalue"/final90percent/allAnnotations.bed "$ovalue"/finalEnds/countingWindows.bed
+#cp "$ovalue"/final90percent/countingWindows_transcriptionalOutput.bed "$ovalue"/finalEnds/countingWindows_transcriptionalOutput.bed
+#cp "$ovalue"/final90percent/onlyIntergenic_90percent_n100.bed "$ovalue"/finalEnds/highConfidenceIntergenicEnds.bed
 
-rm -r "$ovalue"/final90percent
+#rm -r "$ovalue"/final90percent
 
 #### PAS plots
-mkdir -p $ovalue/nucleotideProfiles
- cp "$ovalue"/PASplot/belowAboveThreshold.pdf  $ovalue/nucleotideProfiles
-rm -r  "$ovalue"/PASplot/
+#mkdir -p $ovalue/nucleotideProfiles
+ #cp "$ovalue"/PASplot/belowAboveThreshold.pdf  $ovalue/nucleotideProfiles
+#rm -r  "$ovalue"/PASplot/
 
 echo "Finished cleaning up....."
 
