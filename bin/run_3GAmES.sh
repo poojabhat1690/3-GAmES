@@ -10,7 +10,7 @@ command -v singularity >/dev/null 2>&1 || { echo >&2 "3' GAmES requires singular
 
 ### reading in the variables passed in the command line... 
 
-while getopts 'a: i: o: g: t: u: e: m: c: p:' OPTION; do
+while getopts 'a: i: o: g: t: e: m: c: p:' OPTION; do
 	  case "$OPTION" in
 		      a)
 			      avalue="$OPTARG"
@@ -37,11 +37,6 @@ while getopts 'a: i: o: g: t: u: e: m: c: p:' OPTION; do
 								threshold="$OPTARG"
 								echo "the threshold to consider priming sites is $OPTARG"
 								;;
-
-							u) 
-								ucscdir="$OPTARG"
-								echo "the ucsc directory specified is $OPTARG"
-								;;
 							e)
 								ensembldir="$OPTARG"
 								echo "the ensembl directory specified is $OPTARG"
@@ -60,7 +55,7 @@ while getopts 'a: i: o: g: t: u: e: m: c: p:' OPTION; do
 								;;
 
 					  			  ?)
-										 echo "script usage: $(basename $0) [-a adapter] [-i input directory] [-o output directory] [-g genome file] [-t threshold for priming sites] [-u ucscDir] [-e ensemblDir] [-m mode rnadeq p/s/S] [-c condition]" >&2
+										 echo "script usage: $(basename $0) [-a adapter] [-i input directory] [-o output directory] [-g genome file] [-t threshold for priming sites] [-e ensemblDir] [-m mode rnadeq p/s/S] [-c condition]" >&2
 														        exit 1
 															      ;;
 															        esac
@@ -102,10 +97,7 @@ fi
 		          exit
 		  fi
 
-if [ "x" == "x$ucscdir" ]; then
-	                  echo "please provide -u [path to folder with refSeq annotation]"
-		exit
-	fi
+
 
 
 if [ "x" == "x$ensembldir" ]; then
@@ -155,7 +147,7 @@ date >"$ovalue"/"$Condition".txt
 	### creatig a genome size file, required for further steps....
 
 
-	singularity exec "$PIPELINE"/bin/dependencies_latest.sif samtools  faidx "$genome" -o  "$QUANT_MAP"/"$genome".fai 
+	singularity exec "$PIPELINE"/bin/dependencies_latest.sif  /usr/bin/samtools-1.9/samtools  faidx "$genome" -o  "$QUANT_MAP"/"$genome".fai 
 	cut -f1,2 "$genome".fai > "$QUANT_MAP"/sizes.genome
 
 
@@ -243,14 +235,7 @@ echo "Checking if the required annotations from ENSEMBL and refSeq exist" >> "$o
 echo "#######################################################################"  >> "$ovalue"/"$Condition".txt
 
 
-if [ -d "$ucscdir" ]; then
-	                  ### Take action if $DIR exists ###
-	echo "The directory for refSeq annotations exists." >> "$ovalue"/"$Condition".txt
-		else
-	###  Control will jump here if $DIR does NOT exists ###
-	echo "Error: please check if "$ucscdir" exists :(." >> "$ovalue"/"$Condition".txt
-	exit 1
-	fi
+
 
 if [ -d "$ensembldir" ]; then
 	### Take action if $DIR exists ###
@@ -265,13 +250,13 @@ if [ -d "$ensembldir" ]; then
 printf "\n" >> "$ovalue"/"$Condition".txt
 
 
-if ls "$ucscdir"/refSeq_mrna_utrsPresent.bed 2> /dev/null | grep . > /dev/null; then
+if ls "$ensembldir"/refSeq_mrna_utrsPresent.bed 2> /dev/null | grep . > /dev/null; then
 	    echo "the required refSeq annotation exists... " >> "$ovalue"/"$Condition".txt
 	
 
 
 	else
-		echo "Error: the required refSeq annotation does not exist Please check  "$ucscdir" ">> "$ovalue"/"$Condition".txt
+		echo "Error: the required refSeq annotation does not exist Please check  "$ensembldir" ">> "$ovalue"/"$Condition".txt
 	exit 1
 	fi
 
@@ -280,7 +265,7 @@ if ls "$ensembldir"/proteinCoding_annotatedUTRs.bed 2> /dev/null | grep . > /dev
 	            echo "the ensembl annotation proteinCoding_annotatedUTRs.bed exists. " >> "$ovalue"/"$Condition".txt
 		                
 		            else
-				                    echo "Error: the required annotation proteinCoding_annotatedUTRs.bed does not exist Please check  "$ucscdir" ">> "$ovalue"/"$Condition".txt
+				                    echo "Error: the required annotation proteinCoding_annotatedUTRs.bed does not exist Please check  "$ensembldir" ">> "$ovalue"/"$Condition".txt
 						            exit 1  
 							            fi
 
@@ -289,7 +274,7 @@ if ls "$ensembldir"/proteinCoding_annotatedUTRs.bed 2> /dev/null | grep . > /dev
 if ls "$ensembldir"/exonInfo_proteinCodingGenes.bed 2> /dev/null | grep . > /dev/null; then
 	echo "the ensembl annotation exonInfo_proteinCodingGenes.bed exists. " >> "$ovalue"/"$Condition".txt
 	else
-																                                                        echo "Error: the required annotation exonInfo_proteinCodingGenes.bed does not exist Please check  "$ucscdir" ">> "$ovalue"/"$Condition".txt
+																                                                        echo "Error: the required annotation exonInfo_proteinCodingGenes.bed does not exist Please check  "$ensembldir" ">> "$ovalue"/"$Condition".txt
 exit 1  
 																							fi
 
@@ -297,7 +282,7 @@ exit 1
 if ls "$ensembldir"/intronInfo_proteinCodingGenes.bed 2> /dev/null | grep . > /dev/null; then
 	        echo "the ensembl annotation intronInfo_proteinCodingGenes.bed exists. " >> "$ovalue"/"$Condition".txt
 		        else
-				                                                                                                                                                                     echo "Error: the required annotation intronInfo_proteinCodingGenes.bed does not exist Please check  "$ucscdir" ">> "$ovalue"/"$Condition".txt
+				                                                                                                                                                                     echo "Error: the required annotation intronInfo_proteinCodingGenes.bed does not exist Please check  "$ensembldir" ">> "$ovalue"/"$Condition".txt
 																								exit 1  
 	fi  
 
@@ -538,7 +523,7 @@ rmd="$PIPELINE/scripts/sequencesForNucleotideProfile.R"
 
 rmd="$PIPELINE/scripts/nucleotideProfiles_markdown.new.R"
 
- singularity exec "$PIPELINE"/bin/dependencies_latest.sif  Rscript --slave -e "PPath='$PIPELINE'; InPath='$QUANT_MAP'; OutPath='$QUANT_PASPLOTS'; ucscDir='$ucscdir'; ensemblDir='$ensembldir';source('$rmd')"
+ singularity exec "$PIPELINE"/bin/dependencies_latest.sif  Rscript --slave -e "PPath='$PIPELINE'; InPath='$QUANT_MAP'; OutPath='$QUANT_PASPLOTS'; ensemblDir='$ensembldir';source('$rmd')"
 
 	
  	printf "\n" >> "$ovalue"/"$Condition".txt
@@ -572,7 +557,7 @@ rm $ovalue/coverage/*
 	rmd="$PIPELINE/scripts/getLongestUTR.R"
 	
  	
-	singularity exec "$PIPELINE"/bin/dependencies_latest.sif  Rscript --slave -e "PPath='$PIPELINE'; InPath='$QUANT_MAP'; OutPath='$QUANT_INTERGENIC'; ucscDir='$ucscdir'; ensemblDir='$ensembldir';source('$rmd')"
+	singularity exec "$PIPELINE"/bin/dependencies_latest.sif  Rscript --slave -e "PPath='$PIPELINE'; InPath='$QUANT_MAP'; OutPath='$QUANT_INTERGENIC'; ensemblDir='$ensembldir';source('$rmd')"
 
 	sort -k1,1 -k2,2n $QUANT_INTERGENIC/allExons_refSeq_ensembl.bed > $QUANT_INTERGENIC//allExons_refSeq_ensembl_sorted.bed
 
@@ -594,19 +579,19 @@ source $PIPELINE/scripts/intergenicPeakId.sh
 ######################## final filtering steps
 
 	rmd="$PIPELINE/scripts/assignToUTRs.R"
-	singularity exec "$PIPELINE"/bin/dependencies_latest.sif Rscript --slave -e "BIn='$ivalue'; BOut='$ovalue'; ucscDir='$ucscdir'; ensemblDir='$ensembl';source('$rmd')"
+	singularity exec "$PIPELINE"/bin/dependencies_latest.sif Rscript --slave -e "BIn='$ivalue'; BOut='$ovalue'; ensemblDir='$ensembl';source('$rmd')"
 
 
 
 
 	rmd="$PIPELINE/scripts/90PercentFiltering.R"
 
-	singularity exec "$PIPELINE"/bin/dependencies_latest.sif Rscript --slave -e "BIn='$ivalue'; BOut='$ovalue'; ucscDir='$ucscdir'; ensemblDir='$ensembldir';source('$rmd')"
+	singularity exec "$PIPELINE"/bin/dependencies_latest.sif Rscript --slave -e "BIn='$ivalue'; BOut='$ovalue'; ensemblDir='$ensembldir';source('$rmd')"
 	
 	echo "Filtering out positions with low read counts.." >> "$ovalue"/"$Condition".txt
 
 
-	singularity exec "$PIPELINE"/bin/dependencies_latest.sif  Rscript --vanilla -e "BIn='$ivalue'; BOut='$ovalue'; ucscDir='$ucscdir'; ensemblDir='$ensembldir'; source('$PIPELINE/scripts/mergingCounting.new.R')"
+	singularity exec "$PIPELINE"/bin/dependencies_latest.sif  Rscript --vanilla -e "BIn='$ivalue'; BOut='$ovalue'; ensemblDir='$ensembldir'; source('$PIPELINE/scripts/mergingCounting.new.R')"
 
  echo "Cleaning up a bit....and then we're done!" >> "$ovalue"/"$Condition".txt
 ###### cleaning up a bit... 
