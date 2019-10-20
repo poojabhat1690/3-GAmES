@@ -372,7 +372,7 @@ while read index; do
 	############################################################
 
 	
-	singularity exec "$PIPELINE"/bin/dependencies_latest.sif  cutadapt -a $avalue -o "$OUTDIR"/"$index"_trimmed.fastq  --trim-n $INPUT/"$index" 2>"$LOG"/stderr_"$index".txt 1>>"$LOG"/stdo_"$index".txt
+	#singularity exec "$PIPELINE"/bin/dependencies_latest.sif  cutadapt -a $avalue -o "$OUTDIR"/"$index"_trimmed.fastq  --trim-n $INPUT/"$index" 2>"$LOG"/stderr_"$index".txt 1>>"$LOG"/stdo_"$index".txt
   	
 	if [ $? -eq 0 ]
 	then
@@ -386,7 +386,7 @@ while read index; do
 	
 	#### just adding an N to empty lines.... 
 	
-	sed 's/^$/N/' "$OUTDIR"/"$index"_trimmed.fastq > "$OUTDIR"/"$index"_trimmed_emptyRemoved.fastq
+	#sed 's/^$/N/' "$OUTDIR"/"$index"_trimmed.fastq > "$OUTDIR"/"$index"_trimmed_emptyRemoved.fastq
 
 	
 	#####################################################################
@@ -396,7 +396,7 @@ while read index; do
 	echo "fastx_trimmer to remove 12 nts from the 5 end of the reads" >>"$LOG"/stdo_"$index".txt  
 
 	
-	singularity exec "$PIPELINE"/bin/dependencies_latest.sif fastx_trimmer -Q33 -f 13 -m 1 -i "$OUTDIR"/"$index"_trimmed_emptyRemoved.fastq   > "$OUTDIR"/"$index"_5primetrimmed_trimmed.fastq 2>"$LOG"/stderr_"$index".txt 
+	#singularity exec "$PIPELINE"/bin/dependencies_latest.sif fastx_trimmer -Q33 -f 13 -m 1 -i "$OUTDIR"/"$index"_trimmed_emptyRemoved.fastq   > "$OUTDIR"/"$index"_5primetrimmed_trimmed.fastq 2>"$LOG"/stderr_"$index".txt 
 	
 	
 	       if [ $? -eq 0 ]
@@ -416,7 +416,7 @@ while read index; do
 	###################################################################
 
 	
-	egrep -A2 -B1 'AAAAA$' "$OUTDIR"/"$index"_5primetrimmed_trimmed.fastq  | sed '/^--$/d' > "$OUTDIR"/"$index"_5primetrimmed_trimmed_sizefiltered_polyAreads.fastq  2>"$LOG"/stderr_"$index".txt
+	#egrep -A2 -B1 'AAAAA$' "$OUTDIR"/"$index"_5primetrimmed_trimmed.fastq  | sed '/^--$/d' > "$OUTDIR"/"$index"_5primetrimmed_trimmed_sizefiltered_polyAreads.fastq  2>"$LOG"/stderr_"$index".txt
 	polyAreads=$(cat "$OUTDIR"/"$index"_5primetrimmed_trimmed_sizefiltered_polyAreads.fastq | echo $((`wc -l`/4)))
 	echo readd withs polyA "$polyAreads"  >>"$LOG"/stdo_"$index".txt
 	echo remove the polyAs at the end of polyA reads >>"$LOG"/stdo_"$index".txt
@@ -425,7 +425,7 @@ while read index; do
 
 	#cut super long polyA to avoid internal polyA cutting of 5 or more As
 	
-	 singularity exec "$PIPELINE"/bin/dependencies_latest.sif cutadapt --no-indels -m 18 -e 0 -a "A{1000}"  -o "$OUTDIR"/"$index"_5primetrimmed_trimmed_sizefiltered_polyAreads_polyAremoved.fastq  "$OUTDIR"/"$index"_5primetrimmed_trimmed_sizefiltered_polyAreads.fastq 1>>"$LOG"/stdo_"$index".txt 2>"$LOG"/stderr_"$index".txt
+	 #singularity exec "$PIPELINE"/bin/dependencies_latest.sif cutadapt --no-indels -m 18 -e 0 -a "A{1000}"  -o "$OUTDIR"/"$index"_5primetrimmed_trimmed_sizefiltered_polyAreads_polyAremoved.fastq  "$OUTDIR"/"$index"_5primetrimmed_trimmed_sizefiltered_polyAreads.fastq 1>>"$LOG"/stdo_"$index".txt 2>"$LOG"/stderr_"$index".txt
 	
 	
 	                if [ $? -eq 0 ]
@@ -463,7 +463,7 @@ while read index; do
 	# getting the read length distribution 
 	#################
 
-	awk 'NR%4 == 2 {lengths[length($0)]++} END {for (l in lengths) {print l, lengths[l]}}' "$OUTDIR"/"$index"_5primetrimmed_trimmed_sizefiltered_polyAreads_polyAremoved.fastq >"$OUTDIR"/"$index"_lengthDistribution.txt
+	#awk 'NR%4 == 2 {lengths[length($0)]++} END {for (l in lengths) {print l, lengths[l]}}' "$OUTDIR"/"$index"_5primetrimmed_trimmed_sizefiltered_polyAreads_polyAremoved.fastq >"$OUTDIR"/"$index"_lengthDistribution.txt
 	
 
 	
@@ -472,7 +472,7 @@ while read index; do
 	
 		############### download the SLAMdunk singularity module...
 	
-	singularity exec "$PIPELINE"/bin/slamdunk_v0.3.4.sif slamdunk map -r $genome -o $QUANT_MAP/ -n 100 -5 0 -a 0 -t 1 -e "$QUANT_ALIGN"/"$index"_5primetrimmed_trimmed_sizefiltered_polyAreads_polyAremoved.fastq  
+	#singularity exec "$PIPELINE"/bin/slamdunk_v0.3.4.sif slamdunk map -r $genome -o $QUANT_MAP/ -n 100 -5 0 -a 0 -t 1 -e "$QUANT_ALIGN"/"$index"_5primetrimmed_trimmed_sizefiltered_polyAreads_polyAremoved.fastq  
 		
 	                        if [ $? -eq 0 ]
 					        then
@@ -484,7 +484,7 @@ while read index; do
 																																			                                             
 
 
-	singularity exec "$PIPELINE"/bin/slamdunk_v0.3.4.sif slamdunk filter -o $QUANT_MAP -mq 0 -mi 0.95 -t 1  $QUANT_MAP/"$index"_5primetrimmed_trimmed_sizefiltered_polyAreads_polyAremoved_slamdunk_mapped.bam         
+	#singularity exec "$PIPELINE"/bin/slamdunk_v0.3.4.sif slamdunk filter -o $QUANT_MAP -mq 0 -mi 0.95 -t 1  $QUANT_MAP/"$index"_5primetrimmed_trimmed_sizefiltered_polyAreads_polyAremoved_slamdunk_mapped.bam         
 
 
 	
@@ -499,7 +499,7 @@ fi
 
 
 
-	 singularity exec "$PIPELINE"/bin/dependencies_latest.sif  bedtools bamtobed -i $QUANT_MAP/"$index"_5primetrimmed_trimmed_sizefiltered_polyAreads_polyAremoved_slamdunk_mapped_filtered.bam  > $QUANT_MAP/"$index"_5primetrimmed_trimmed_sizefiltered_polyAreads_polyAremoved_slamdunk_mapped.bam_bamTobed.bed 
+	 #singularity exec "$PIPELINE"/bin/dependencies_latest.sif  bedtools bamtobed -i $QUANT_MAP/"$index"_5primetrimmed_trimmed_sizefiltered_polyAreads_polyAremoved_slamdunk_mapped_filtered.bam  > $QUANT_MAP/"$index"_5primetrimmed_trimmed_sizefiltered_polyAreads_polyAremoved_slamdunk_mapped.bam_bamTobed.bed 
 	
 		if [ $? -eq 0 ]
 		               then
@@ -511,9 +511,9 @@ fi
 
 
 
-		 awk -vFS="\t" '$6 == "-"' $QUANT_MAP/"$index"_5primetrimmed_trimmed_sizefiltered_polyAreads_polyAremoved_slamdunk_mapped.bam_bamTobed.bed > $QUANT_MAP/"$index"_5primetrimmed_trimmed_sizefiltered_polyAreads_polyAremoved_slamdunk_mapped.bam_bamTobed_minusStrand.bed
+	#	 awk -vFS="\t" '$6 == "-"' $QUANT_MAP/"$index"_5primetrimmed_trimmed_sizefiltered_polyAreads_polyAremoved_slamdunk_mapped.bam_bamTobed.bed > $QUANT_MAP/"$index"_5primetrimmed_trimmed_sizefiltered_polyAreads_polyAremoved_slamdunk_mapped.bam_bamTobed_minusStrand.bed
 		  
-			  awk -vFS="\t" '$6 == "+"' $QUANT_MAP/"$index"_5primetrimmed_trimmed_sizefiltered_polyAreads_polyAremoved_slamdunk_mapped.bam_bamTobed.bed > $QUANT_MAP/"$index"_5primetrimmed_trimmed_sizefiltered_polyAreads_polyAremoved_slamdunk_mapped.bam_bamTobed_plusStrand.bed
+	#		  awk -vFS="\t" '$6 == "+"' $QUANT_MAP/"$index"_5primetrimmed_trimmed_sizefiltered_polyAreads_polyAremoved_slamdunk_mapped.bam_bamTobed.bed > $QUANT_MAP/"$index"_5primetrimmed_trimmed_sizefiltered_polyAreads_polyAremoved_slamdunk_mapped.bam_bamTobed_plusStrand.bed
 
 	echo "Pre-processing for "$index" completed" >> "$ovalue"/"$Condition".txt
 
@@ -528,9 +528,9 @@ fi
 	             then
 			echo "Pre-processing completed" >> "$ovalue"/"$Condition".txt
 			exit 1 
-		else   
-			echo " "  >> "$ovalue"/"$Condition".txt
-		fi              
+	else
+		echo "proceeding with priming site identification." >> "$ovalue"/"$Condition".txt
+	fi              
 																										                           
   
  ########################## Once this is done. I need to find the priming site ##################################
@@ -545,9 +545,9 @@ printf "\n" >> "$ovalue"/"$Condition".txt
 
 
 
-	cat $QUANT_MAP/*_bamTobed_minusStrand.bed | awk -vFS="\t" '{print $1,$2}'  | sort | uniq -c | perl -pe 's#^\s+##'  > $QUANT_MAP/polyAreads_polyAremoved_pooled_slamdunk_mapped_filtered_bamTobed_minusStrand_countsUnique.bed
+	#cat $QUANT_MAP/*_bamTobed_minusStrand.bed | awk -vFS="\t" '{print $1,$2}'  | sort | uniq -c | perl -pe 's#^\s+##'  > $QUANT_MAP/polyAreads_polyAremoved_pooled_slamdunk_mapped_filtered_bamTobed_minusStrand_countsUnique.bed
 
-	cat $QUANT_MAP/*_bamTobed_plusStrand.bed | awk  -vFS="\t" '{print $1,$3}' | sort | uniq -c | perl -pe 's#^\s+##' > $QUANT_MAP/polyAreads_polyAremoved_pooled_slamdunk_mapped_filtered_bamTobed_plusStrand_countsUnique.bed
+	#cat $QUANT_MAP/*_bamTobed_plusStrand.bed | awk  -vFS="\t" '{print $1,$3}' | sort | uniq -c | perl -pe 's#^\s+##' > $QUANT_MAP/polyAreads_polyAremoved_pooled_slamdunk_mapped_filtered_bamTobed_plusStrand_countsUnique.bed
 
 
 	onPositive=$(wc -l  "$QUANT_MAP"/polyAreads_polyAremoved_pooled_slamdunk_mapped_filtered_bamTobed_plusStrand_countsUnique.bed)
@@ -555,19 +555,19 @@ printf "\n" >> "$ovalue"/"$Condition".txt
 
 
 
-	awk -vT=$threshold '{ if ($1 >=T) print  }' "$QUANT_MAP"/polyAreads_polyAremoved_pooled_slamdunk_mapped_filtered_bamTobed_minusStrand_countsUnique.bed >"$QUANT_MAP"/polyAreads_polyAremoved_pooled_slamdunk_mapped_filtered_bamTobed_minusStrand_countsUnique_greaterThan"$threshold".bed
+	#awk -vT=$threshold '{ if ($1 >=T) print  }' "$QUANT_MAP"/polyAreads_polyAremoved_pooled_slamdunk_mapped_filtered_bamTobed_minusStrand_countsUnique.bed >"$QUANT_MAP"/polyAreads_polyAremoved_pooled_slamdunk_mapped_filtered_bamTobed_minusStrand_countsUnique_greaterThan"$threshold".bed
 
-	awk -vT=$threshold '{ if ($1 >=T) print  }' "$QUANT_MAP"/polyAreads_polyAremoved_pooled_slamdunk_mapped_filtered_bamTobed_plusStrand_countsUnique.bed >"$QUANT_MAP"/polyAreads_polyAremoved_pooled_slamdunk_mapped_filtered_bamTobed_plusStrand_countsUnique_greaterThan"$threshold".bed
-
-
-	awk -vOFS="\t" '{print $2, $3-1, $3, $1}' $QUANT_MAP"/polyAreads_polyAremoved_pooled_slamdunk_mapped_filtered_bamTobed_plusStrand_countsUnique_greaterThan"$threshold".bed" | sort -k1,1 -k2,2n  > "$QUANT_MAP"/polyAreads_polyAremoved_pooled_slamdunk_mapped_filtered_bamTobed_plusStrand_countsUnique_greaterThan"$threshold".bed_sorted.bed_changedCoordinates.bed
-
-	awk -vOFS="\t" '{print $2, $3, $3+1, $1}' $QUANT_MAP"/polyAreads_polyAremoved_pooled_slamdunk_mapped_filtered_bamTobed_minusStrand_countsUnique_greaterThan"$threshold".bed" | sort -k1,1 -k2,2n  > "$QUANT_MAP"/polyAreads_polyAremoved_pooled_slamdunk_mapped_filtered_bamTobed_minusStrand_countsUnique_greaterThan"$threshold".bed_sorted.bed_changedCoordinates.bed
+	#awk -vT=$threshold '{ if ($1 >=T) print  }' "$QUANT_MAP"/polyAreads_polyAremoved_pooled_slamdunk_mapped_filtered_bamTobed_plusStrand_countsUnique.bed >"$QUANT_MAP"/polyAreads_polyAremoved_pooled_slamdunk_mapped_filtered_bamTobed_plusStrand_countsUnique_greaterThan"$threshold".bed
 
 
+	#awk -vOFS="\t" '{print $2, $3-1, $3, $1}' $QUANT_MAP"/polyAreads_polyAremoved_pooled_slamdunk_mapped_filtered_bamTobed_plusStrand_countsUnique_greaterThan"$threshold".bed" | sort -k1,1 -k2,2n  > "$QUANT_MAP"/polyAreads_polyAremoved_pooled_slamdunk_mapped_filtered_bamTobed_plusStrand_countsUnique_greaterThan"$threshold".bed_sorted.bed_changedCoordinates.bed
+
+	#awk -vOFS="\t" '{print $2, $3, $3+1, $1}' $QUANT_MAP"/polyAreads_polyAremoved_pooled_slamdunk_mapped_filtered_bamTobed_minusStrand_countsUnique_greaterThan"$threshold".bed" | sort -k1,1 -k2,2n  > "$QUANT_MAP"/polyAreads_polyAremoved_pooled_slamdunk_mapped_filtered_bamTobed_minusStrand_countsUnique_greaterThan"$threshold".bed_sorted.bed_changedCoordinates.bed
 
 
-   singularity exec "$PIPELINE"/bin/dependencies_latest.sif bedtools merge -d 0 -i "$QUANT_MAP"/polyAreads_polyAremoved_pooled_slamdunk_mapped_filtered_bamTobed_minusStrand_countsUnique_greaterThan"$threshold".bed_sorted.bed_changedCoordinates.bed -c 4 -o count,collapse >   "$QUANT_MAP"/polyAreads_polyAremoved_pooled_slamdunk_mapped_filtered_bamTobed_minusStrand_countsUnique_greaterThan"$threshold".bed_sorted_merged.bed
+
+
+   #singularity exec "$PIPELINE"/bin/dependencies_latest.sif bedtools merge -d 0 -i "$QUANT_MAP"/polyAreads_polyAremoved_pooled_slamdunk_mapped_filtered_bamTobed_minusStrand_countsUnique_greaterThan"$threshold".bed_sorted.bed_changedCoordinates.bed -c 4 -o count,collapse >   "$QUANT_MAP"/polyAreads_polyAremoved_pooled_slamdunk_mapped_filtered_bamTobed_minusStrand_countsUnique_greaterThan"$threshold".bed_sorted_merged.bed
 
 		if [ $? -eq 0 ]
 		               then
@@ -578,7 +578,7 @@ printf "\n" >> "$ovalue"/"$Condition".txt
 		fi
 
 
-    singularity exec "$PIPELINE"/bin/dependencies_latest.sif  bedtools merge  -d 0  -i "$QUANT_MAP"/polyAreads_polyAremoved_pooled_slamdunk_mapped_filtered_bamTobed_plusStrand_countsUnique_greaterThan"$threshold".bed_sorted.bed_changedCoordinates.bed -c 4 -o count,collapse > "$QUANT_MAP"/polyAreads_polyAremoved_pooled_slamdunk_mapped_filtered_bamTobed_plusStrand_countsUnique_greaterThan"$threshold".bed_sorted_merged.bed 
+    #singularity exec "$PIPELINE"/bin/dependencies_latest.sif  bedtools merge  -d 0  -i "$QUANT_MAP"/polyAreads_polyAremoved_pooled_slamdunk_mapped_filtered_bamTobed_plusStrand_countsUnique_greaterThan"$threshold".bed_sorted.bed_changedCoordinates.bed -c 4 -o count,collapse > "$QUANT_MAP"/polyAreads_polyAremoved_pooled_slamdunk_mapped_filtered_bamTobed_plusStrand_countsUnique_greaterThan"$threshold".bed_sorted_merged.bed 
  
  
 		if [ $? -eq 0 ]
@@ -614,7 +614,7 @@ printf "\n" >> "$ovalue"/"$Condition".txt
 
 
 
- 	singularity exec "$PIPELINE"/bin/dependencies_latest.sif  Rscript  --vanilla $PIPELINE/scripts/overlappingPolyApeaks.R "$QUANT_MAP"/polyAreads_polyAremoved_pooled_slamdunk_mapped_filtered_bamTobed_plusStrand_countsUnique_greaterThan"$threshold".bed_sorted_merged.bed "$QUANT_MAP"/polyAreads_polyAremoved_pooled_slamdunk_mapped_filtered_bamTobed_minusStrand_countsUnique_greaterThan"$threshold".bed_sorted_merged.bed "$QUANT_MAP"/peaks_"$threshold"_120bps.bed "$QUANT_MAP"/sizes.genome
+ #	singularity exec "$PIPELINE"/bin/dependencies_latest.sif  Rscript  --vanilla $PIPELINE/scripts/overlappingPolyApeaks.R "$QUANT_MAP"/polyAreads_polyAremoved_pooled_slamdunk_mapped_filtered_bamTobed_plusStrand_countsUnique_greaterThan"$threshold".bed_sorted_merged.bed "$QUANT_MAP"/polyAreads_polyAremoved_pooled_slamdunk_mapped_filtered_bamTobed_minusStrand_countsUnique_greaterThan"$threshold".bed_sorted_merged.bed "$QUANT_MAP"/peaks_"$threshold"_120bps.bed "$QUANT_MAP"/sizes.genome
 
 		if [ $? -eq 0 ]
 		               then
@@ -626,7 +626,7 @@ printf "\n" >> "$ovalue"/"$Condition".txt
 
 	
 
-singularity exec "$PIPELINE"/bin/dependencies_latest.sif  bedtools getfasta -s -fi $genome -bed "$QUANT_MAP"/peaks_"$threshold"_120bps.bed -fo "$QUANT_MAP"/peaks_"$threshold"_120bps.fa 2>"$LOG"/stderr_"$index".txt 
+#singularity exec "$PIPELINE"/bin/dependencies_latest.sif  bedtools getfasta -s -fi $genome -bed "$QUANT_MAP"/peaks_"$threshold"_120bps.bed -fo "$QUANT_MAP"/peaks_"$threshold"_120bps.fa 2>"$LOG"/stderr_"$index".txt 
 
 	if [ $? -eq 0 ]
 		               then
@@ -642,7 +642,7 @@ singularity exec "$PIPELINE"/bin/dependencies_latest.sif  bedtools getfasta -s -
 
 rmd="$PIPELINE/scripts/sequencesForNucleotideProfile.R"
 
-	singularity exec "$PIPELINE"/bin/dependencies_latest.sif  Rscript --vanilla -e "InPath='$QUANT_MAP';threshold="$threshold";source('$rmd')"
+#	singularity exec "$PIPELINE"/bin/dependencies_latest.sif  Rscript --vanilla -e "InPath='$QUANT_MAP';threshold="$threshold";source('$rmd')"
 
 			if [ $? -eq 0 ]
 		               then
@@ -659,7 +659,7 @@ rmd="$PIPELINE/scripts/sequencesForNucleotideProfile.R"
 
 rmd="$PIPELINE/scripts/nucleotideProfiles_markdown.new.R"
 
- singularity exec "$PIPELINE"/bin/dependencies_latest.sif  Rscript --slave -e "PPath='$PIPELINE'; InPath='$QUANT_MAP'; OutPath='$QUANT_PASPLOTS'; ensemblDir='$ensembldir';source('$rmd')"
+ #singularity exec "$PIPELINE"/bin/dependencies_latest.sif  Rscript --slave -e "PPath='$PIPELINE'; InPath='$QUANT_MAP'; OutPath='$QUANT_PASPLOTS'; ensemblDir='$ensembldir';source('$rmd')"
 
 					if [ $? -eq 0 ]
 		               then
@@ -696,62 +696,97 @@ echo "Finding intergenic ends... this will take some time....." >> "$ovalue"/"$C
 
 rm $ovalue/coverage/*
 
+
+
+	#### checking if the directory exists...if RNAseq folder exists, check the bam and bai files... 
+
+	
+	
 	if [ -d "$ivalue"/rnaseq/ ]; then
 	 
-		echo "using the RNAseq samples in the folder "$ivalue"/rnaseq/ "  
-	fi
+		echo "using the RNAseq samples in the folder $ivalue/rnaseq/ "  
 
+			if ls "$ivalue"/rnaseq/*.bam 2> /dev/null | grep . > /dev/null; then
+				  echo "bam files exist" >> "$ovalue"/"$Condition".txt
+			else
+				echo "bam files of RNAseq are missing. Please check "$ivalue"/rnaseq/ " >> "$ovalue"/"$Condition".txt
+				exit 1
+			fi
 
-	if [ ! -d "$ivalue"/rnaseq/ ]; then
-	
-		echo "the rnaseq directory does not exist. Please check if it is named rnaseq."
-	fi
+			if ls "$ivalue"/rnaseq/*.bai 2> /dev/null | grep . > /dev/null; then
+				echo "bam indices exist" >> "$ovalue"/"$Condition".txt
+			
+			else
+					echo " bam files dont seem to be indexed, performing indexing " >> "$ovalue"/"$Condition".txt  
+			
+					cd "$ivalue"/rnaseq/
+					for bamfile in *.bam
+						do
+							singularity exec "$PIPELINE"/bin/dependencies_latest.sif  /usr/bin/samtools-1.9/samtools index "$bamfile"  
+						done
+			fi
+			
+		rmd="$PIPELINE/scripts/getLongestUTR.R"
 
+		singularity exec "$PIPELINE"/bin/dependencies_latest.sif  Rscript --slave -e "PPath='$PIPELINE'; InPath='$QUANT_MAP'; OutPath='$QUANT_INTERGENIC'; ensemblDir='$ensembldir';source('$rmd')"
 
-	rmd="$PIPELINE/scripts/getLongestUTR.R"
-	
- 	
-	singularity exec "$PIPELINE"/bin/dependencies_latest.sif  Rscript --slave -e "PPath='$PIPELINE'; InPath='$QUANT_MAP'; OutPath='$QUANT_INTERGENIC'; ensemblDir='$ensembldir';source('$rmd')"
-
-		if [ $? -eq 0 ]
-		    then
-				         echo ""
+			 if [ $? -eq 0 ]
+			then
+				echo ""
 			else
 				echo " ERR: the script getLongestUTR returned an error">> "$ovalue"/"$Condition".txt
-				 exit 1  
-		fi
-	
+				exit 1
+			fi
+																										               
+		sort -k1,1 -k2,2n $QUANT_INTERGENIC/allExons_refSeq_ensembl.bed > $QUANT_INTERGENIC//allExons_refSeq_ensembl_sorted.bed
 
-	sort -k1,1 -k2,2n $QUANT_INTERGENIC/allExons_refSeq_ensembl.bed > $QUANT_INTERGENIC//allExons_refSeq_ensembl_sorted.bed
+		  ### this is the bed file of the most distal 3' position per gene. 
 
- ### this is the bed file of the most distal 3' position per gene. 
+		sort -k1,1 -k2,2n $QUANT_INTERGENIC/toExtend_longestEnsembl_refSeq_n100.bed > $QUANT_INTERGENIC/toExtend_longestEnsembl_refSeq_n100_sorted.bed
 
-	 sort -k1,1 -k2,2n $QUANT_INTERGENIC/toExtend_longestEnsembl_refSeq_n100.bed > $QUANT_INTERGENIC/toExtend_longestEnsembl_refSeq_n100_sorted.bed
+		 ##### we want to calculate the distance between the most distal 3' end per gene and the next annotation (ensembl), to prevent considering RNAseq singal coming from another annotation. 
+
+		         singularity exec "$PIPELINE"/bin/dependencies_latest.sif  bedtools closest -d -s -io -iu -D a -a $QUANT_INTERGENIC/toExtend_longestEnsembl_refSeq_n100_sorted.bed -b $QUANT_INTERGENIC/allExons_refSeq_ensembl_sorted.bed > $QUANT_INTERGENIC/toExtend_longestEnsembl_refSeq_n100_sorted_distances.bed
+			
+
+			if [ $? -eq 0 ]
+				    then
+					echo ""
+				    else
+					echo " ERR: bedtools closest returned an error">> "$ovalue"/"$Condition".txt
+				   exit 1  
+			fi
+
+			  ## adding intergenic peaks                                                                                                                                                   
+
+			  source $PIPELINE/scripts/intergenicPeakId.sh
+
+			
+			if [ $? -eq 0 ]; then
+						echo ""
+				else
+					echo " ERR: intergenicPeakId returned an error">> "$ovalue"/"$Condition".txt
+				exit 1
+			fi
+
+	else
+			echo "the rnaseq directory does not exist. Running the analysis without intergenic end identification" >>  "$ovalue"/"$Condition".txt  
+
+	fi
 
 
- ##### we want to calculate the distance between the most distal 3' end per gene and the next annotation (ensembl), to prevent considering RNAseq singal coming from another annotation. 
 
-	singularity exec "$PIPELINE"/bin/dependencies_latest.sif  bedtools closest -d -s -io -iu -D a -a $QUANT_INTERGENIC/toExtend_longestEnsembl_refSeq_n100_sorted.bed -b $QUANT_INTERGENIC/allExons_refSeq_ensembl_sorted.bed > $QUANT_INTERGENIC/toExtend_longestEnsembl_refSeq_n100_sorted_distances.bed
-		
-	if [ $? -eq 0 ]
-		    then
-				         echo ""
-			else
-				echo " ERR: bedtools closest returned an error">> "$ovalue"/"$Condition".txt
-				 exit 1  
-		fi
 
-	## adding intergenic peaks
+#### Another stop sign here..
+            
 
-source $PIPELINE/scripts/intergenicPeakId.sh
-
-if [ $? -eq 0 ]
-		    then
-				         echo ""
-			else
-				echo " ERR: intergenicPeakId returned an error">> "$ovalue"/"$Condition".txt
-				 exit 1  
-		fi
+	if [ $STOP ==  "intergenicends" ]
+		    then 
+			echo "Internal priming sites removed..." >> "$ovalue"/"$Condition".txt
+			exit 1  
+		else
+			echo " "  >> "$ovalue"/"$Condition".txt
+			fi
 
 
 
