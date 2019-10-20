@@ -1,7 +1,7 @@
 #!/bin/bash
 
-#### load singularity ... required version > 3.0
-#module load singularity/3.2.1
+
+
 
 command -v singularity >/dev/null 2>&1 || { echo >&2 "3' GAmES requires singularity version > 3.0, please load this and try again."; exit 1; }
 
@@ -10,7 +10,7 @@ command -v singularity >/dev/null 2>&1 || { echo >&2 "3' GAmES requires singular
 
 ### reading in the variables passed in the command line... 
 
-while getopts 'a: i: o: g: t: e: m: c: p:' OPTION; do
+while getopts 'a: i: o: g: t: e: m: c: p: s:' OPTION; do
 	  case "$OPTION" in
 		      a)
 			      avalue="$OPTARG"
@@ -53,9 +53,14 @@ while getopts 'a: i: o: g: t: e: m: c: p:' OPTION; do
 								PIPELINE="$OPTARG"
 								echo "the pipeline is here $OPTARG"
 								;;
+							 s)
+								STOP="$OPTARG"
+								echo "Stopping after running $OPTARG"
+								;;
+
 
 					  			  ?)
-										 echo "script usage: $(basename $0) [-a adapter] [-i input directory] [-o output directory] [-g genome file] [-t threshold for priming sites] [-e ensemblDir] [-m mode rnadeq p/s/S] [-c condition]" >&2
+										 echo "script usage: $(basename $0) [-a adapter] [-i input directory] [-o output directory] [-g genome file] [-t threshold for priming sites] [-e ensemblDir] [-m mode rnadeq p/s/S] [-c condition] [-p path 3GAmES folder] [-s part of pipeline to stop at]" >&2
 														        exit 1
 															      ;;
 															        esac
@@ -118,6 +123,10 @@ if [ "x" == "x$Condition" ]; then
 fi
 
 
+if [ "x" == "x$STOP" ]; then
+	                   echo "please provide -s "
+			                              exit
+					      fi
 
 
 
@@ -191,8 +200,8 @@ if [ -d "$ivalue"/quantseq ]; then
 if [ -d "$ivalue"/rnaseq ]; then
 	echo "rnaseq directory exists." >> "$ovalue"/"$Condition".txt
 		else
-	echo "Error: "$ivalue"/rnaseq not found. Can not continue, required input folder is missing :(." >> "$ovalue"/"$Condition".txt
-		exit 1
+	echo ""$ivalue"/rnaseq not found. Running pipeline without intergenic end extension" >> "$ovalue"/"$Condition".txt
+		
 	fi
 
 
@@ -212,18 +221,23 @@ if ls "$ivalue"/quantseq/*.{gz,fastq,fq} 2> /dev/null | grep . > /dev/null; then
 ###################### check for the presence of bam files 
 
 
+	#### if no bam or bai files, run without intergenic end identification...
 
 if ls "$ivalue"/rnaseq/*.bam 2> /dev/null | grep . > /dev/null; then
 	           echo "bam files exist" >> "$ovalue"/"$Condition".txt
 		  
 		      else
-			   echo "Error: there are no bam files. Please check  "$ivalue"/rnaseq/" >> "$ovalue"/"$Condition".txt
+			   echo " Seems like there are no bam files, running 3'GAmES without intergnic end identification " >> "$ovalue"/"$Condition".txt
 		 fi
+		 
+		 
+		 
+		 
 
 if ls "$ivalue"/rnaseq/*.bai 2> /dev/null | grep . > /dev/null; then
 	                   echo "bam indices exist" >> "$ovalue"/"$Condition".txt
 			              else
-	echo "Error: Do the bam files in "$ivalue"/rnaseq have an index? Please use samtools index to create indices." >> "$ovalue"/"$Condition".txt
+		echo " Seems like there are no bam files, running 3'GAmES without intergnic end identification " >> "$ovalue"/"$Condition".txt  
 	fi
 
 echo "Input data exists! Last checks in progress...."  >> "$ovalue"/"$Condition".txt
@@ -357,9 +371,16 @@ while read index; do
 	### trimming adapter and adding the relavant information. 
 	############################################################
 
-				echo "	         	adapters trimmed" >> "$ovalue"/"$Condition".txt
+	
 	singularity exec "$PIPELINE"/bin/dependencies_latest.sif  cutadapt -a $avalue -o "$OUTDIR"/"$index"_trimmed.fastq  --trim-n $INPUT/"$index" 2>"$LOG"/stderr_"$index".txt 1>>"$LOG"/stdo_"$index".txt
   	
+	if [ $? -eq 0 ]
+	then
+		      echo "                  adapters trimming finished" >> "$ovalue"/"$Condition".txt
+	    else
+		        echo "			adapter trimming failed for "$index" " >> "$ovalue"/"$Condition".txt
+		fi
+
 	adapterTrimming=$(cat  "$OUTDIR"/"$index"_trimmed.fastq | echo $((`wc -l`/4)))
  	echo the number of reads after adapter trimming is "$adapterTrimming" >>"$LOG"/stdo_"$index".txt
 	
@@ -377,13 +398,18 @@ while read index; do
 	
 	singularity exec "$PIPELINE"/bin/dependencies_latest.sif fastx_trimmer -Q33 -f 13 -m 1 -i "$OUTDIR"/"$index"_trimmed_emptyRemoved.fastq   > "$OUTDIR"/"$index"_5primetrimmed_trimmed.fastq 2>"$LOG"/stderr_"$index".txt 
 	
-	#fivePrimeTrimmed=$(cat  "$OUTDIR"/"$index"_5primetrimmed_trimmed.fastq | echo $((`wc -l`/4)))                                                                                    
-	echo number of reads after 5 trimmig "$fivePrimeTrimmed" >>"$LOG"/stdo_"$index".txt
-	echo "retaining reads that have >=5 As the the 3 end" >>"$LOG"/stdo_"$index".txt
+	
+	       if [ $? -eq 0 ]
+		               then
+				         echo "                  5' nucleotides trimmed" >> "$ovalue"/"$Condition".txt
+			else
+				echo "                  5' trimming failed for "$index" " >> "$ovalue"/"$Condition".txt
+				 exit 1  
+		fi
 
-	echo "                  5' nucleotides trimmed" >> "$ovalue"/"$Condition".txt
-	
-	
+
+
+
 	
 	###################################################################
 	#### removing A's from the 3' end
@@ -401,21 +427,33 @@ while read index; do
 	
 	 singularity exec "$PIPELINE"/bin/dependencies_latest.sif cutadapt --no-indels -m 18 -e 0 -a "A{1000}"  -o "$OUTDIR"/"$index"_5primetrimmed_trimmed_sizefiltered_polyAreads_polyAremoved.fastq  "$OUTDIR"/"$index"_5primetrimmed_trimmed_sizefiltered_polyAreads.fastq 1>>"$LOG"/stdo_"$index".txt 2>"$LOG"/stderr_"$index".txt
 	
+	
+	                if [ $? -eq 0 ]
+				 then
+					 echo "                  poly(A) reads processed" >> "$ovalue"/"$Condition".txt
+						else   
+							echo "                  poly(A) read processing failed "$index" " >> "$ovalue"/"$Condition".txt
+							 exit 1  
+				fi      
+																								                   
+	
+	
 	 finalReads=$(cat "$OUTDIR"/"$index"_5primetrimmed_trimmed_sizefiltered_polyAreads_polyAremoved.fastq | echo $((`wc -l`/4)))
 	
 	 echo final reads after size filtering "$finalReads"  >>"$LOG"/stdo_"$index".txt
-	 echo "                  ploy(A) reads processed" >> "$ovalue"/"$Condition".txt 
 	
 	  
+	
+
+
 	################
 	# write stats
 	#################
 
 	touch "$LOG"/preProcessingNumbers_"$index".txt
 
-	echo initialFile:"$initialrReads" >>"$LOG"/preProcessingNumbers_"$index".txt
+
 	echo adapterTrimmed:"$adapterTrimming" >>"$LOG"/preProcessingNumbers_"$index".txt
-	echo fivePrimeTrimming:"$fivePrimeTrimmed" >>"$LOG"/preProcessingNumbers_"$index".txt
 	echo polyAcontaining:"$polyAreads" >>"$LOG"/preProcessingNumbers_"$index".txt
 	echo finalFile:"$finalReads" >>"$LOG"/preProcessingNumbers_"$index".txt
 	echo the pre processing before mapping has been completed.  >>"$LOG"/stdo_"$index".txt
@@ -435,14 +473,43 @@ while read index; do
 		############### download the SLAMdunk singularity module...
 	
 	singularity exec "$PIPELINE"/bin/slamdunk_v0.3.4.sif slamdunk map -r $genome -o $QUANT_MAP/ -n 100 -5 0 -a 0 -t 1 -e "$QUANT_ALIGN"/"$index"_5primetrimmed_trimmed_sizefiltered_polyAreads_polyAremoved.fastq  
+		
+	                        if [ $? -eq 0 ]
+					        then
+						echo "SLAMdunk mapping complete" >> "$ovalue"/"$Condition".txt
+						else   
+						echo "SLAMdunk mapping failed " >> "$ovalue"/"$Condition".txt
+						 exit 1  
+ fi      
+																																			                                             
+
 
 	singularity exec "$PIPELINE"/bin/slamdunk_v0.3.4.sif slamdunk filter -o $QUANT_MAP -mq 0 -mi 0.95 -t 1  $QUANT_MAP/"$index"_5primetrimmed_trimmed_sizefiltered_polyAreads_polyAremoved_slamdunk_mapped.bam         
 
 
 	
-	echo "                  mapping completed" >> "$ovalue"/"$Condition".txt
+		  if [ $? -eq 0 ]
+			        then
+				echo "SLAMdunk filtering complete" >> "$ovalue"/"$Condition".txt
+				else
+					echo "SLAMdunk mapping failed " >> "$ovalue"/"$Condition".txt
+					 exit 1  
+fi      
+			
+
+
 
 	 singularity exec "$PIPELINE"/bin/dependencies_latest.sif  bedtools bamtobed -i $QUANT_MAP/"$index"_5primetrimmed_trimmed_sizefiltered_polyAreads_polyAremoved_slamdunk_mapped_filtered.bam  > $QUANT_MAP/"$index"_5primetrimmed_trimmed_sizefiltered_polyAreads_polyAremoved_slamdunk_mapped.bam_bamTobed.bed 
+	
+		if [ $? -eq 0 ]
+		               then
+				         echo ""
+			else
+				echo " ERR: bamtobed failed">> "$ovalue"/"$Condition".txt
+				 exit 1  
+		fi
+
+
 
 		 awk -vFS="\t" '$6 == "-"' $QUANT_MAP/"$index"_5primetrimmed_trimmed_sizefiltered_polyAreads_polyAremoved_slamdunk_mapped.bam_bamTobed.bed > $QUANT_MAP/"$index"_5primetrimmed_trimmed_sizefiltered_polyAreads_polyAremoved_slamdunk_mapped.bam_bamTobed_minusStrand.bed
 		  
@@ -455,10 +522,16 @@ while read index; do
 
 
 
+  ###### putting a stop sign here...
 
-
-
-  
+       if [ $STOP ==  "preprocess" ]
+	             then
+			echo "Pre-processing completed" >> "$ovalue"/"$Condition".txt
+			exit 1 
+		else   
+			echo " "  >> "$ovalue"/"$Condition".txt
+		fi              
+																										                           
   
  ########################## Once this is done. I need to find the priming site ##################################
 
@@ -496,8 +569,44 @@ printf "\n" >> "$ovalue"/"$Condition".txt
 
    singularity exec "$PIPELINE"/bin/dependencies_latest.sif bedtools merge -d 0 -i "$QUANT_MAP"/polyAreads_polyAremoved_pooled_slamdunk_mapped_filtered_bamTobed_minusStrand_countsUnique_greaterThan"$threshold".bed_sorted.bed_changedCoordinates.bed -c 4 -o count,collapse >   "$QUANT_MAP"/polyAreads_polyAremoved_pooled_slamdunk_mapped_filtered_bamTobed_minusStrand_countsUnique_greaterThan"$threshold".bed_sorted_merged.bed
 
+		if [ $? -eq 0 ]
+		               then
+				         echo ""
+			else
+				echo " ERR: bedtools merge failed">> "$ovalue"/"$Condition".txt
+				 exit 1  
+		fi
+
+
     singularity exec "$PIPELINE"/bin/dependencies_latest.sif  bedtools merge  -d 0  -i "$QUANT_MAP"/polyAreads_polyAremoved_pooled_slamdunk_mapped_filtered_bamTobed_plusStrand_countsUnique_greaterThan"$threshold".bed_sorted.bed_changedCoordinates.bed -c 4 -o count,collapse > "$QUANT_MAP"/polyAreads_polyAremoved_pooled_slamdunk_mapped_filtered_bamTobed_plusStrand_countsUnique_greaterThan"$threshold".bed_sorted_merged.bed 
  
+ 
+		if [ $? -eq 0 ]
+		               then
+				         echo ""
+			else
+				echo " ERR: bedtools merge failed">> "$ovalue"/"$Condition".txt
+				 exit 1  
+		fi
+
+
+
+
+		  ###### putting a stop sign here...
+
+		  if [ $STOP ==  "primingsites" ]
+			then
+			echo "Priming sites identified..." >> "$ovalue"/"$Condition".txt
+			exit 1  
+		else            
+			echo " "  >> "$ovalue"/"$Condition".txt
+		fi
+																			        
+																			                                                            
+																			       
+
+ 	
+
 
 ######################################
 ###3 getting the sequences +/- 60 nts around the priming sites... 
@@ -507,15 +616,42 @@ printf "\n" >> "$ovalue"/"$Condition".txt
 
  	singularity exec "$PIPELINE"/bin/dependencies_latest.sif  Rscript  --vanilla $PIPELINE/scripts/overlappingPolyApeaks.R "$QUANT_MAP"/polyAreads_polyAremoved_pooled_slamdunk_mapped_filtered_bamTobed_plusStrand_countsUnique_greaterThan"$threshold".bed_sorted_merged.bed "$QUANT_MAP"/polyAreads_polyAremoved_pooled_slamdunk_mapped_filtered_bamTobed_minusStrand_countsUnique_greaterThan"$threshold".bed_sorted_merged.bed "$QUANT_MAP"/peaks_"$threshold"_120bps.bed "$QUANT_MAP"/sizes.genome
 
+		if [ $? -eq 0 ]
+		               then
+				         echo ""
+			else
+				echo " ERR: the script overlappingPolyApeaks returned an error">> "$ovalue"/"$Condition".txt
+				 exit 1  
+		fi
+
 	
 
 singularity exec "$PIPELINE"/bin/dependencies_latest.sif  bedtools getfasta -s -fi $genome -bed "$QUANT_MAP"/peaks_"$threshold"_120bps.bed -fo "$QUANT_MAP"/peaks_"$threshold"_120bps.fa 2>"$LOG"/stderr_"$index".txt 
+
+	if [ $? -eq 0 ]
+		               then
+				         echo ""
+			else
+				echo " ERR: bedtools getfasta failed">> "$ovalue"/"$Condition".txt
+				 exit 1  
+		fi
+
+	
 
 #### getting sequences in the 120 nucleotide window
 
 rmd="$PIPELINE/scripts/sequencesForNucleotideProfile.R"
 
 	singularity exec "$PIPELINE"/bin/dependencies_latest.sif  Rscript --vanilla -e "InPath='$QUANT_MAP';threshold="$threshold";source('$rmd')"
+
+			if [ $? -eq 0 ]
+		               then
+				         echo ""
+			else
+				echo " ERR: the script sequencesForNucleotideProfile.R returned an error">> "$ovalue"/"$Condition".txt
+				 exit 1  
+		fi
+
 
 #####################
 #### creating nucleotie profile plots...
@@ -525,9 +661,27 @@ rmd="$PIPELINE/scripts/nucleotideProfiles_markdown.new.R"
 
  singularity exec "$PIPELINE"/bin/dependencies_latest.sif  Rscript --slave -e "PPath='$PIPELINE'; InPath='$QUANT_MAP'; OutPath='$QUANT_PASPLOTS'; ensemblDir='$ensembldir';source('$rmd')"
 
+					if [ $? -eq 0 ]
+		               then
+				         echo ""
+			else
+				echo " ERR: the script nucleotideProfiles_markdown.new returned an error">> "$ovalue"/"$Condition".txt
+				 exit 1  
+		fi
+
+	
 	
  	printf "\n" >> "$ovalue"/"$Condition".txt
 	echo "Nucleotide profiles to check for internal priming..." >> "$ovalue"/"$Condition".txt
+
+#### Another stop sign here..
+	    if [ $STOP ==  "internalpriming" ]
+		then
+		echo "Internal priming sites removed..." >> "$ovalue"/"$Condition".txt
+		exit 1  
+	else            
+		echo " "  >> "$ovalue"/"$Condition".txt
+	fi
 
 
 
@@ -559,6 +713,15 @@ rm $ovalue/coverage/*
  	
 	singularity exec "$PIPELINE"/bin/dependencies_latest.sif  Rscript --slave -e "PPath='$PIPELINE'; InPath='$QUANT_MAP'; OutPath='$QUANT_INTERGENIC'; ensemblDir='$ensembldir';source('$rmd')"
 
+		if [ $? -eq 0 ]
+		    then
+				         echo ""
+			else
+				echo " ERR: the script getLongestUTR returned an error">> "$ovalue"/"$Condition".txt
+				 exit 1  
+		fi
+	
+
 	sort -k1,1 -k2,2n $QUANT_INTERGENIC/allExons_refSeq_ensembl.bed > $QUANT_INTERGENIC//allExons_refSeq_ensembl_sorted.bed
 
  ### this is the bed file of the most distal 3' position per gene. 
@@ -569,17 +732,45 @@ rm $ovalue/coverage/*
  ##### we want to calculate the distance between the most distal 3' end per gene and the next annotation (ensembl), to prevent considering RNAseq singal coming from another annotation. 
 
 	singularity exec "$PIPELINE"/bin/dependencies_latest.sif  bedtools closest -d -s -io -iu -D a -a $QUANT_INTERGENIC/toExtend_longestEnsembl_refSeq_n100_sorted.bed -b $QUANT_INTERGENIC/allExons_refSeq_ensembl_sorted.bed > $QUANT_INTERGENIC/toExtend_longestEnsembl_refSeq_n100_sorted_distances.bed
-
+		
+	if [ $? -eq 0 ]
+		    then
+				         echo ""
+			else
+				echo " ERR: bedtools closest returned an error">> "$ovalue"/"$Condition".txt
+				 exit 1  
+		fi
 
 	## adding intergenic peaks
 
 source $PIPELINE/scripts/intergenicPeakId.sh
+
+if [ $? -eq 0 ]
+		    then
+				         echo ""
+			else
+				echo " ERR: intergenicPeakId returned an error">> "$ovalue"/"$Condition".txt
+				 exit 1  
+		fi
+
+
 
 
 ######################## final filtering steps
 
 	rmd="$PIPELINE/scripts/assignToUTRs.R"
 	singularity exec "$PIPELINE"/bin/dependencies_latest.sif Rscript --slave -e "BIn='$ivalue'; BOut='$ovalue'; ensemblDir='$ensembl';source('$rmd')"
+	
+	
+
+if [ $? -eq 0 ]
+		    then
+				         echo ""
+			else
+				echo  " ERR: the script assignToUTRs returned an error" >> "$ovalue"/"$Condition".txt
+				 exit 1  
+		fi
+
 
 
 
@@ -588,6 +779,16 @@ source $PIPELINE/scripts/intergenicPeakId.sh
 
 	singularity exec "$PIPELINE"/bin/dependencies_latest.sif Rscript --slave -e "BIn='$ivalue'; BOut='$ovalue'; ensemblDir='$ensembldir';source('$rmd')"
 	
+	if [ $? -eq 0 ]
+		    then
+				         echo ""
+			else
+				echo  " ERR: the script 90PercentFiltering returned an error" >> "$ovalue"/"$Condition".txt
+				 exit 1  
+		fi
+
+
+
 	echo "Filtering out positions with low read counts.." >> "$ovalue"/"$Condition".txt
 
 
@@ -599,29 +800,29 @@ source $PIPELINE/scripts/intergenicPeakId.sh
 
 ##### pre-processing data...
 
-#mkdir -p $ovalue/pre-processingLogs
-#cp "$ovalue"/polyAmapping_allTimepoints/logs/*  $ovalue/pre-processingLogs/
-#rm -r "$ovalue"/polyAmapping_allTimepoints
+mkdir -p $ovalue/pre-processingLogs
+cp "$ovalue"/polyAmapping_allTimepoints/logs/*  $ovalue/pre-processingLogs/
+rm -r "$ovalue"/polyAmapping_allTimepoints
 
 ##### coverage (redundant - not used anymore)
-#rm -r "$ovalue"/coverage
-#rm -r "$ovalue"/intergenicPeaks
-#rm -r "$ovalue"/ExtendingINtergenicRegions
+rm -r "$ovalue"/coverage
+rm -r "$ovalue"/intergenicPeaks
+rm -r "$ovalue"/ExtendingINtergenicRegions
 
 
 #### final 3' end annotations
-#mkdir -p $ovalue/finalEnds
-#cp "$ovalue"/final90percent/ends_greater90percent_intergenic_n100.bed "$ovalue"/finalEnds/highConfidenceEnds.bed
-#cp "$ovalue"/final90percent/allAnnotations.bed "$ovalue"/finalEnds/countingWindows.bed
-#cp "$ovalue"/final90percent/countingWindows_transcriptionalOutput.bed "$ovalue"/finalEnds/countingWindows_transcriptionalOutput.bed
-#cp "$ovalue"/final90percent/onlyIntergenic_90percent_n100.bed "$ovalue"/finalEnds/highConfidenceIntergenicEnds.bed
+mkdir -p $ovalue/finalEnds
+cp "$ovalue"/final90percent/ends_greater90percent_intergenic_n100.bed "$ovalue"/finalEnds/highConfidenceEnds.bed
+cp "$ovalue"/final90percent/allAnnotations.bed "$ovalue"/finalEnds/countingWindows.bed
+cp "$ovalue"/final90percent/countingWindows_transcriptionalOutput.bed "$ovalue"/finalEnds/countingWindows_transcriptionalOutput.bed
+cp "$ovalue"/final90percent/onlyIntergenic_90percent_n100.bed "$ovalue"/finalEnds/highConfidenceIntergenicEnds.bed
 
-#rm -r "$ovalue"/final90percent
+rm -r "$ovalue"/final90percent
 
 #### PAS plots
-#mkdir -p $ovalue/nucleotideProfiles
- #cp "$ovalue"/PASplot/belowAboveThreshold.pdf  $ovalue/nucleotideProfiles
-#rm -r  "$ovalue"/PASplot/
+mkdir -p $ovalue/nucleotideProfiles
+ cp "$ovalue"/PASplot/belowAboveThreshold.pdf  $ovalue/nucleotideProfiles
+rm -r  "$ovalue"/PASplot/
 
 echo "Finished cleaning up....."
 
