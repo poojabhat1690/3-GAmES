@@ -567,7 +567,7 @@ printf "\n" >> "$ovalue"/"$Condition".txt
 
 
 
-   singularity exec "$PIPELINE"/bin/dependencies_latest.sif bedtools merge -d 0 -i "$QUANT_MAP"/polyAreads_polyAremoved_pooled_slamdunk_mapped_filtered_bamTobed_minusStrand_countsUnique_greaterThan"$threshold".bed_sorted.bed_changedCoordinates.bed -c 4 -o count,collapse >   "$QUANT_MAP"/polyAreads_polyAremoved_pooled_slamdunk_mapped_filtered_bamTobed_minusStrand_countsUnique_greaterThan"$threshold".bed_sorted_merged.bed
+ singularity exec "$PIPELINE"/bin/dependencies_latest.sif bedtools merge -d 0 -i "$QUANT_MAP"/polyAreads_polyAremoved_pooled_slamdunk_mapped_filtered_bamTobed_minusStrand_countsUnique_greaterThan"$threshold".bed_sorted.bed_changedCoordinates.bed -c 4 -o count,collapse >   "$QUANT_MAP"/polyAreads_polyAremoved_pooled_slamdunk_mapped_filtered_bamTobed_minusStrand_countsUnique_greaterThan"$threshold".bed_sorted_merged.bed
 
 		if [ $? -eq 0 ]
 		               then
@@ -614,7 +614,7 @@ printf "\n" >> "$ovalue"/"$Condition".txt
 
 
 
- singularity exec "$PIPELINE"/bin/dependencies_latest.sif  Rscript  --vanilla $PIPELINE/scripts/overlappingPolyApeaks.R "$QUANT_MAP"/polyAreads_polyAremoved_pooled_slamdunk_mapped_filtered_bamTobed_plusStrand_countsUnique_greaterThan"$threshold".bed_sorted_merged.bed "$QUANT_MAP"/polyAreads_polyAremoved_pooled_slamdunk_mapped_filtered_bamTobed_minusStrand_countsUnique_greaterThan"$threshold".bed_sorted_merged.bed "$QUANT_MAP"/peaks_"$threshold"_120bps.bed "$QUANT_MAP"/sizes.genome
+singularity exec "$PIPELINE"/bin/dependencies_latest.sif  Rscript  --vanilla $PIPELINE/scripts/overlappingPolyApeaks.R "$QUANT_MAP"/polyAreads_polyAremoved_pooled_slamdunk_mapped_filtered_bamTobed_plusStrand_countsUnique_greaterThan"$threshold".bed_sorted_merged.bed "$QUANT_MAP"/polyAreads_polyAremoved_pooled_slamdunk_mapped_filtered_bamTobed_minusStrand_countsUnique_greaterThan"$threshold".bed_sorted_merged.bed "$QUANT_MAP"/peaks_"$threshold"_120bps.bed "$QUANT_MAP"/sizes.genome
 
 		if [ $? -eq 0 ]
 		               then
@@ -787,9 +787,6 @@ rm $ovalue/coverage/*
 		else
 			echo " "  >> "$ovalue"/"$Condition".txt
 			fi
-
-
-
 
 ######################## final filtering steps
 
