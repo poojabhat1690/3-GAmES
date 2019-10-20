@@ -16,7 +16,7 @@ suppressMessages(library(GenomicRanges))
                                         #library(tidyr)
 #### reading in the annotations from refSeq and ensembl
 
-refSeq_unmerged = read.table(paste0(ucscDir, "/refSeq_mrna_utrsPresent.bed"),stringsAsFactors = F)
+refSeq_unmerged = read.table(paste0(ensemblDir, "/refSeq_mrna_utrsPresent.bed"),stringsAsFactors = F)
 #refFlat <- read.table(paste0(ucscDir, "/refFlat.txt"), stringsAsFactors = F)
 
 #refSeqTranscr <- merge(refFlat, refSeq_unmerged, by.x = "V2", by.y = "V7")

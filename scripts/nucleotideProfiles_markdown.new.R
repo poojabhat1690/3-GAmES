@@ -36,7 +36,7 @@ source(paste0(PPath, "/scripts/overlappingHierarchical.R"))
 
 ###reading in the annotations
 #FIXME no absolute dirs
-utrAnnotation = read.table(paste0(ucscDir, "/refSeq_mrna_utrsPresent.bed"),sep="\t",stringsAsFactors = F)
+utrAnnotation = read.table(paste0(ensemblDir, "/refSeq_mrna_utrsPresent.bed"),sep="\t",stringsAsFactors = F)
 ensembl_annotation = read.table(paste0(ensemblDir, "/proteinCoding_annotatedUTRs.bed"),sep="\t",stringsAsFactors = F)
 exonAnnotation = read.table(paste0(ensemblDir, "/exonInfo_proteinCodingGenes.bed"),sep="\t",stringsAsFactors = F)
 intronAnnotation = read.table(paste0(ensemblDir, "/intronInfo_proteinCodingGenes.bed"),sep="\t",stringsAsFactors = F)

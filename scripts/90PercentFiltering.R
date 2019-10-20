@@ -1,38 +1,55 @@
 library(checkmate)
 
-
-## readin in peaks, intergenic, refSeq and all other ends
-
-
-intergenicPeaks = read.table(paste0(BOut, "/ExtendingINtergenicRegions/allIntergenicPeaks_n100_new.txt"),sep="\t",stringsAsFactors = F,header = F)
-#assertDataFrame(intergenicPeaks,ncols = 26)
-
-ends_all= read.delim(paste0(BOut, "/polyAmapping_allTimepoints/n_100_global_a0/ends_all_10threshold_n100.txt"),stringsAsFactors = F,header=T)
-assertDataFrame(ends_all, ncols = 22)
-
-
-
-
-
-## rearranging the data frames
-
-intergenicPeaks$V4 = unlist(lapply(strsplit(intergenicPeaks$V16,",",T),function(x) x[[1]]))
-
-intergenicPeaks_rearranged = cbind.data.frame(intergenicPeaks$V1,intergenicPeaks$V2, intergenicPeaks$V3, intergenicPeaks$V4, intergenicPeaks$V5, intergenicPeaks$V6, intergenicPeaks$V19,V10="intergenic") 
-colnames(intergenicPeaks_rearranged) = paste("V",c(1:ncol(intergenicPeaks_rearranged)),sep="")
-assertDataFrame(intergenicPeaks_rearranged,nrows = nrow(intergenicPeaks),ncols = 8)
-
-ensemblIdsOfMissing = ends_all[which(ends_all$V4 == ""),]$V17
-ends_all$V4[which(ends_all$V4 == "")] <-ensemblIdsOfMissing
-
-ends_all_rearranged = cbind.data.frame(ends_all$V1, ends_all$V2, ends_all$V3, ends_all$V4, ends_all$V5, ends_all$V6, ends_all$overlap, "UTRoverlapping")
-colnames(ends_all_rearranged) = paste("V",c(1:ncol(ends_all_rearranged)),sep="")
-assertDataFrame(ends_all_rearranged,nrows = nrow(ends_all),ncols = 8)
-
-querySubject = rbind(intergenicPeaks_rearranged, ends_all_rearranged)
-
-
-
+if (file.exists(paste0(BOut, "/ExtendingINtergenicRegions/allIntergenicPeaks_n100_new.txt"))){
+  intergenicPeaks = read.table(paste0(BOut, "/ExtendingINtergenicRegions/allIntergenicPeaks_n100_new.txt"),sep="\t",stringsAsFactors = F,header = F)
+  intergenicPeaks$V4 = unlist(lapply(strsplit(intergenicPeaks$V16,",",T),function(x) x[[1]]))
+  
+  intergenicPeaks_rearranged = cbind.data.frame(intergenicPeaks$V1,intergenicPeaks$V2, intergenicPeaks$V3, intergenicPeaks$V4, intergenicPeaks$V5, intergenicPeaks$V6, intergenicPeaks$V19,V10="intergenic") 
+  colnames(intergenicPeaks_rearranged) = paste("V",c(1:ncol(intergenicPeaks_rearranged)),sep="")
+  assertDataFrame(intergenicPeaks_rearranged,nrows = nrow(intergenicPeaks),ncols = 8)
+  
+  ends_all= read.delim(paste0(BOut, "/polyAmapping_allTimepoints/n_100_global_a0/ends_all_10threshold_n100.txt"),stringsAsFactors = F,header=T)
+  assertDataFrame(ends_all, ncols = 22)
+  
+  
+  
+  
+  
+  ## rearranging the data frames
+  
+  
+  ensemblIdsOfMissing = ends_all[which(ends_all$V4 == ""),]$V17
+  ends_all$V4[which(ends_all$V4 == "")] <-ensemblIdsOfMissing
+  
+  ends_all_rearranged = cbind.data.frame(ends_all$V1, ends_all$V2, ends_all$V3, ends_all$V4, ends_all$V5, ends_all$V6, ends_all$overlap, "UTRoverlapping")
+  colnames(ends_all_rearranged) = paste("V",c(1:ncol(ends_all_rearranged)),sep="")
+  assertDataFrame(ends_all_rearranged,nrows = nrow(ends_all),ncols = 8)
+  
+  querySubject = rbind(intergenicPeaks_rearranged, ends_all_rearranged)
+  
+} else{
+  
+  ends_all= read.delim(paste0(BOut, "/polyAmapping_allTimepoints/n_100_global_a0/ends_all_10threshold_n100.txt"),stringsAsFactors = F,header=T)
+  assertDataFrame(ends_all, ncols = 22)
+  
+  
+  
+  
+  
+  ## rearranging the data frames
+  
+  
+  ensemblIdsOfMissing = ends_all[which(ends_all$V4 == ""),]$V17
+  ends_all$V4[which(ends_all$V4 == "")] <-ensemblIdsOfMissing
+  
+  ends_all_rearranged = cbind.data.frame(ends_all$V1, ends_all$V2, ends_all$V3, ends_all$V4, ends_all$V5, ends_all$V6, ends_all$overlap, "UTRoverlapping")
+  colnames(ends_all_rearranged) = paste("V",c(1:ncol(ends_all_rearranged)),sep="")
+  assertDataFrame(ends_all_rearranged,nrows = nrow(ends_all),ncols = 8)
+  
+  querySubject = rbind( ends_all_rearranged)
+  
+  
+}
 
 ## get sum of the polyA reads
 

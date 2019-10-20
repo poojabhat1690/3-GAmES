@@ -125,7 +125,7 @@ write.table(allAnnotations,paste0(BOut, "/final90percent/allAnnotations.bed"),se
 ## and intergenic peaks that pass the 90% threshold
 #########################################################################
 
-refSeq = read.table(paste0(ucscDir, "//refSeq_mrna_utrsPresent.bed"),stringsAsFactors = F)
+refSeq = read.table(paste0(ensemblDir, "//refSeq_mrna_utrsPresent.bed"),stringsAsFactors = F)
 ensembl = read.delim(paste0(ensemblDir, "/proteinCoding_annotatedUTRs.bed"),stringsAsFactors = F,header = F)
 
 allAnnotations <- cbind(allAnnotations, "250CountWindow")
