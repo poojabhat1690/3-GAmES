@@ -81,7 +81,9 @@ run_3GAmES.sh -a [adapter] -i [input directory] -o [output directory] -g [genome
 	
 	-p path  to the 3-GAmES folder
 
+	-s step after which pipeline will stop [options:preprocessing, primingsites, intergenicends, all]
 
+example : run_3GAmES.sh -a AGATCGGAAGAGCACACGTCTGAACTCCAGTCACNNNNNNATCTCGTATGCCGTCTTCTGCTTG -i /scratch/pooja/inputQuio_new/Ski7_EPE_T1/ -o /scratch/pooja/SLAMannotation/dr//quio_jan17/Ski7_EPE_T1_new/ -g /groups/ameres/bioinformatics/references/danio_rerio/dr11/danRer11.fa -t 2 -u /groups/ameres/Pooja/Projects/zebrafishAnnotation/dr11/refSeq_dr11_GRCz11_2019Sep20/ -e /groups/ameres/Pooja/Projects/zebrafishAnnotation/dr11/ensembl_dr11_Ensembl_Genes_93/ -m p -c Ski7_EPE_T1_new
 
 ## Output description
 The final ouput and all intermediate files are organized in the follwing folders:
