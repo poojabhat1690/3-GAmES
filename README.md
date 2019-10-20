@@ -20,7 +20,12 @@ A description of the different steps outlined can be found in the wiki.
 
 
 ## Requirements
-After cloning 3'GAmES and pulling the dependencies, the last thing required are ENSEMBL and refSeq annotations... 
+After cloning 3'GAmES and pulling the dependencies
+1. orgnise the input data : 3'GAmES requires an input folder that contains. 
+	a. A folder named 'quantseq', which contains fastq files in formal *.fq, *.fastq or *.gz
+	b. A folder namesd 'rnaseq' [optional], which contains mapped RNAseq files, and the corresponding indices. The data in this folder is needed for extending the analysis to intergenic regions. 
+	 
+2. create ENSEMBL and refSeq annotation files (check below)... 
 
 ### Annotations required
 To start, 3' GAmES requrires the dependecies as singularity images and an annotation set from refSeq and ENSEMBL. 
