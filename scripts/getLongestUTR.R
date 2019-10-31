@@ -42,24 +42,27 @@ allTrans$start <- allTrans$start + 1
 
 gid <- allTrans %>% dplyr::group_by(gid) %>% dplyr::summarize(uid = paste(gid, tid, sep = ",", collapse = '|')) %>% as.data.frame
 allTrans <- merge(allTrans, gid, by = "gid")
-allTransGR <- with(allTrans, GRanges(chr, IRanges(start = start,end = end),strand = strand,score=0,names=uid))
 
-allTransGRReduced = reduce(split(allTransGR, elementMetadata(allTransGR)$names)) 
+#### getting the most distal end for minus strand 
 
-allTransGRReducedDF <- do.call(rbind, lapply(allTransGRReduced, as.data.frame))
+allTrans_minus = allTrans[allTrans$strand=="-",]
+allTrans_minus = split(allTrans_minus,allTrans_minus$uid,T)
+allTrans_minus = lapply(allTrans_minus,function(x) x[order(x$start,decreasing = F),])
+allTrans_minus = lapply(allTrans_minus,function(x) x[1,])
+allTrans_minus = do.call(rbind.data.frame,allTrans_minus)
 
-allTransGRReducedDFBed <- cbind(allTransGRReducedDF[,c(1,2,3)], sub(",.*", "", rownames(allTransGRReducedDF)), 0, allTransGRReducedDF$strand, rownames(allTransGRReducedDF))
+allTrans_plus = allTrans[allTrans$strand=="+",]
+allTrans_plus = split(allTrans_plus,allTrans_plus$uid,T)
+allTrans_plus = lapply(allTrans_plus,function(x) x[order(x$end,decreasing = T),])
+allTrans_plus = lapply(allTrans_plus,function(x) x[1,])
+allTrans_plus = do.call(rbind.data.frame,allTrans_plus)
 
 
-
-
-### in this step, we get the most distal 3' end per gene. 
-
-
-
-
-write.table(allTransGRReducedDFBed,paste0(OutPath, "/toExtend_longestEnsembl_refSeq_n100.txt"),quote = F,sep="\t",row.names = F,col.names = F)
-write.table(allTransGRReducedDFBed,paste0(OutPath, "/toExtend_longestEnsembl_refSeq_n100.bed"),quote = F,sep="\t",row.names = F,col.names = F)
+allTrans = rbind.data.frame(allTrans_plus,allTrans_minus)
+allTrans$score=0
+allTrans = allTrans[,c('chr','start','end','gid','score','strand','uid')]
+write.table(allTrans,paste0(OutPath, "/toExtend_longestEnsembl_refSeq_n100.txt"),quote = F,sep="\t",row.names = F,col.names = F)
+write.table(allTrans,paste0(OutPath, "/toExtend_longestEnsembl_refSeq_n100.bed"),quote = F,sep="\t",row.names = F,col.names = F)
 
 
 

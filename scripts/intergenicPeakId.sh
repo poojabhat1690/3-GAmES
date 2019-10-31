@@ -15,7 +15,7 @@ cat $QUANT_INTERGENIC/distances_minus_tmp.bed $QUANT_INTERGENIC//distances_plus_
 
 
  #### mean of the reads in the last 200 nucleotides...
-  awk -v OFS='\t' '{sum=0; for(i=9; i<=NF; i++) sum += $i; print $1,$2,$3,$4,$5,$6,$7,$8,sum/(NF-9)}' $QUANT_INTERGENIC//customAnnotation_longestTranscripts_100IntoUTR.bed >  $QUANT_INTERGENIC//customAnnotation_longestTranscripts_100IntoUTR_mean.bed
+  awk -v OFS='\t' '{sum=0; for(i=9; i<=NF; i++) sum += $i; print $1,$2,$3,$4,$5,$6,$7,$8,sum/(NF-8)}' $QUANT_INTERGENIC//customAnnotation_longestTranscripts_100IntoUTR.bed >  $QUANT_INTERGENIC//customAnnotation_longestTranscripts_100IntoUTR_mean.bed
 
   ### i want to remove the windows that have less that 10 reads in the last 200 nts
   awk '{if($9 > 10) print}' $QUANT_INTERGENIC//customAnnotation_longestTranscripts_100IntoUTR_mean.bed > $QUANT_INTERGENIC//customAnnotation_longestTranscripts_100IntoUTR_mean_tmp.bed
@@ -27,7 +27,7 @@ cat $QUANT_INTERGENIC/distances_minus_tmp.bed $QUANT_INTERGENIC//distances_plus_
   do
 
 	  	awk -v s=20 -v OFS='\t' '{ if($6 == "+" ) print $1,$2+s,$3+s,$4,$5,$6,$7, $8,$9 ; else print $1,$2-s,$3-s,$4,$5,$6,$7,$8,$9 }' $QUANT_INTERGENIC//customAnnotation_longestTranscripts_100IntoUTR_mean_tmp.bed > $QUANT_INTERGENIC//customAnnotation_longestTranscripts_100IntoUTR_mean_"$i".bed 
-			singularity exec /groups/ameres/Pooja/dependencies.sif bedtools multicov -split -s -bams  $ivalue/rnaseq/*.bam -bed $QUANT_INTERGENIC/customAnnotation_longestTranscripts_100IntoUTR_mean_"$i".bed |  awk -v OFS='\t' '{sum=0; for(i=10; i<=NF; i++) sum += $i; print $1,$2,$3,$4,$5,$6,$7,$8,$9,sum/(NF-10), (sum/(NF-10))/$9}' |  awk -v OFS='\t' '{if($11 > 0.1) print $1,$2,$3,$4,$5,$6,$7,$8,$9}' | awk -v OFS='\t' '{if ($i*s<$8) print $0}' - > $QUANT_INTERGENIC/customAnnotation_longestTranscripts_100IntoUTR_mean_final"$i".bed
+			singularity exec /groups/ameres/Pooja/dependencies.sif bedtools multicov -split -s -bams  $ivalue/rnaseq/*.bam -bed $QUANT_INTERGENIC/customAnnotation_longestTranscripts_100IntoUTR_mean_"$i".bed |  awk -v OFS='\t' '{sum=0; for(i=10; i<=NF; i++) sum += $i; print $1,$2,$3,$4,$5,$6,$7,$8,$9,sum/(NF-9), (sum/(NF-9))/$9}' |  awk -v OFS='\t' '{if($11 > 0.1) print $1,$2,$3,$4,$5,$6,$7,$8,$9}' | awk -v OFS='\t' '{if ($i*s<$8) print $0}' - > $QUANT_INTERGENIC/customAnnotation_longestTranscripts_100IntoUTR_mean_final"$i".bed
 				cp  $QUANT_INTERGENIC/customAnnotation_longestTranscripts_100IntoUTR_mean_final"$i".bed  $QUANT_INTERGENIC/customAnnotation_longestTranscripts_100IntoUTR_mean_tmp.bed 
 
 			done
