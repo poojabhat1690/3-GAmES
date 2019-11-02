@@ -25,6 +25,8 @@ After cloning 3'GAmES and pulling the dependencies
 
 		a. A folder named 'quantseq', which contains fastq files in formal *.fq, *.fastq or *.gz
 		b. A folder namesd 'rnaseq' [optional], which contains mapped RNAseq files, and the corresponding indices. The data in this folder is needed for extending the analysis to intergenic regions. 
+The pipeline can be run without RNAseq data - in which case, please provide only a 'quantseq' in the input directory. In this mode, 
+
 	 
 2. create ENSEMBL and refSeq annotation files (descripton provided below)
 
