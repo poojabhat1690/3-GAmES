@@ -91,7 +91,7 @@ run_3GAmES.sh -a [adapter] -i [input directory] -o [output directory] -g [genome
 
 	-s step after which pipeline will stop [options:preprocessing, primingsites, intergenicends, all]
 
-example : run_3GAmES.sh -a AGATCGGAAGAGCACACGTCTGAACTCCAGTCACNNNNNNATCTCGTATGCCGTCTTCTGCTTG -i /scratch/3-GAmES/xcondition_input/ -o /scratch/xcondition_output/ -g /groups/ameres/bioinformatics/references/danio_rerio/dr11/danRer11.fa -t 2  -e /scratch/3-GAmES/annotations_all/ -m p -c trialSample -p /scratch/3-GAmES -s all
+example : run_3GAmES.sh -a AGATCGGAAGAGCACACGTCTGAACTCCAGTCACNNNNNNATCTCGTATGCCGTCTTCTGCTTG -i xcondition_input/ -o xcondition_output/ -g danio_rerio/dr11/danRer11.fa -t 2  -e annotations_all/ -m p -c trialSample -p /scratch/3-GAmES -s all
 
 ## Output description
 The final output and all intermediate files are organized in the following folders:
