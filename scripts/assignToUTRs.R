@@ -1,13 +1,3 @@
-
-
-
-
-
-
-
-
-
-
 ## this script creates a file for the accepted refSeq and ensembl 3'UTR overlapping ends. 
 
 
@@ -21,9 +11,9 @@ refSeq_total = read.table(paste0(BOut, "/polyAmapping_allTimepoints/n_100_global
 
 ensembl_total = read.table(paste0(BOut, "/polyAmapping_allTimepoints/n_100_global_a0/ensembl_total.bed"),sep="\t",stringsAsFactors = F)
 ensembl_intronOverlapping =  read.table(paste0(BOut, "/polyAmapping_allTimepoints/n_100_global_a0/intron_total.bed"),sep="\t",stringsAsFactors = F)
-ensembl_intronOverlapping$V14 = ensembl_intronOverlapping$V17 
+#ensembl_intronOverlapping$V14 = ensembl_intronOverlapping$V17 
 ensembl_exonOverlapping =  read.table(paste0(BOut, "/polyAmapping_allTimepoints/n_100_global_a0/exon_total.bed"),sep="\t",stringsAsFactors = F)
-ensembl_exonOverlapping$V14 = ensembl_exonOverlapping$V17
+#ensembl_exonOverlapping$V14 = ensembl_exonOverlapping$V17
 
 assertDataFrame(x = refSeq_total,ncols = 21)
 assertDataFrame(x = ensembl_total,ncols = 21)

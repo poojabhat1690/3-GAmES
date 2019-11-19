@@ -147,7 +147,6 @@ getPASfractions_thresholded_binned = function(QueryData){
     outputList[[i]] = query_threshold
     QueryData = QueryData[-which(QueryData$totalAs< threshold[i]),]
 
-    cat(i)
   }
   return(outputList)
 }

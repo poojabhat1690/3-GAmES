@@ -82,7 +82,7 @@ peaks_bedFile = read.table(paste0(InPath, "/sequences_120nts.bed"),sep="\t",stri
 assertDataFrame(peaks_bedFile,ncol=10,types = c("character","numeric","numeric","character","character","character","character","character","character","numeric"))
 colnames(peaks_bedFile) = c(paste("V",c(1:6),sep=""),"sequences_polyApeaks_120bps","peakName","downstreamSeq","totalAs")
 
-cat("the numebr of peaks that pass the 10 read thresold, with adjacent positions merged are : ",nrow(peaks_bedFile))
+cat("the number of peaks that pass the 10 read thresold, with adjacent positions merged are : ",nrow(peaks_bedFile))
 
 
 
@@ -101,13 +101,13 @@ collapedEnsemblTranscriptIds = ensemblOverlapping$overlappers[which(ensemblOverl
 ensemblOverlapping$overlappers[which(ensemblOverlapping$overlappers$collapsedGene == ""),]$collapsedGene  <- collapedEnsemblTranscriptIds
 
 ### there are some NA values in the exon annotations... iw ant to just add the ensembl names for these... 
-exonAnnotation$nameTmp = unlist(lapply(strsplit(exonAnnotation$V4, "." ,T),function(x) x[1]))
-exonAnnotation = exonAnnotation %>% mutate(V7 = ifelse(V7 == "NA",nameTmp,V7)) %>% dplyr::select(-nameTmp)
+#exonAnnotation$nameTmp = unlist(lapply(strsplit(exonAnnotation$V4, "." ,T),function(x) x[1]))
+#exonAnnotation = exonAnnotation %>% mutate(V7 = ifelse(V7 == "NA",nameTmp,V7)) %>% dplyr::select(-nameTmp)
 exonOverlapping = overlapAnnotations(peakFile = ensemblOverlapping[[2]], annotation = exonAnnotation)
 
 
-intronAnnotation$nameTmp = unlist(lapply(strsplit(intronAnnotation$V4, "." ,T),function(x) x[1]))
-intronAnnotation = intronAnnotation %>% mutate(V7 = ifelse(V7 == "NA",nameTmp,V7)) %>% dplyr::select(-nameTmp)
+#intronAnnotation$nameTmp = unlist(lapply(strsplit(intronAnnotation$V4, "." ,T),function(x) x[1]))
+#intronAnnotation = intronAnnotation %>% mutate(V7 = ifelse(V7 == "NA",nameTmp,V7)) %>% dplyr::select(-nameTmp)
 
 
 intronOverlapping = overlapAnnotations(peakFile = exonOverlapping[[2]], annotation = intronAnnotation)
