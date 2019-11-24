@@ -41,7 +41,7 @@ cat $QUANT_INTERGENIC/distances_minus_tmp.bed $QUANT_INTERGENIC//distances_plus_
 			cat $QUANT_MAP/nonOverlapping_total_noPAS.bed $QUANT_MAP/nonOverlapping_total_PAS.bed > $QUANT_MAP/nonOverlapping_total_passing.bed
 
 
-			singularity exec /groups/ameres/Pooja/dependencies.sif bedtools intersect -wa -wb -b $QUANT_INTERGENIC/totalWindows_extensions.bed -a $QUANT_MAP/nonOverlapping_total_passing.bed > $ovalue/ExtendingINtergenicRegions/overlapping_windows.bed
+			singularity exec /groups/ameres/Pooja/dependencies.sif bedtools intersect -s -wa -wb -b $QUANT_INTERGENIC/totalWindows_extensions.bed -a $QUANT_MAP/nonOverlapping_total_passing.bed > $ovalue/ExtendingINtergenicRegions/overlapping_windows.bed
 			sort -u -k4,4 $ovalue/ExtendingINtergenicRegions/overlapping_windows.bed  > $ovalue/ExtendingINtergenicRegions/allIntergenicPeaks_n100_new.txt
 
 
