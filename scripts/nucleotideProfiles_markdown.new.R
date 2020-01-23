@@ -45,7 +45,7 @@ intronAnnotation = read.table(paste0(ensemblDir, "/intronInfo_proteinCodingGenes
 ##### some checks for the input data : 
 
 assertDataFrame(utrAnnotation,ncol=7,types = c("character","numeric","numeric","character","numeric","character","character"))
-assert_set_equal(length(grep("NM",utrAnnotation$V7)),nrow(utrAnnotation))
+#assert_set_equal(length(grep("NM",utrAnnotation$V7)),nrow(utrAnnotation))
 
 assertDataFrame(ensembl_annotation,ncol=7,types = c("character","numeric","numeric","character","numeric","character","character"))
 #assert_set_equal(length(grep("ENSMUST",ensembl_annotation$V7)),nrow(ensembl_annotation))
@@ -229,13 +229,14 @@ sequences_noPas = lapply(sequences_noPas,function(x) delete.NULLs(x))
 sequences_pas_refSeqEnsembl = list(sequences_pas[[1]],sequences_pas[[2]],sequences_pas[[3]],sequences_pas[[4]]) #### the dataframes 1 and 2 of the list are the refSeq overlapping and ensembl overlapping peaks.
 names(sequences_pas_refSeqEnsembl) = c("refSeq","ensembl","exon","intron")
 sequences_UTRseqs = vector("list",8)
+categories = c( "0-0.12",    "0.12-0.24", "0.24-0.36", "0.36-0.48", "0.48-0.60" ,"0.60-0.72" ,"0.72-0.84" ,"0.84-1.00")
 
 names(sequences_UTRseqs) = names(sequences_pas[[1]])
 for(i in 1:length(sequences_pas_refSeqEnsembl[[1]])){
-  sequences_UTRseqs[[i]] = c(sequences_pas_refSeqEnsembl[[1]][[i]],sequences_pas_refSeqEnsembl[[2]][[i]],sequences_pas_refSeqEnsembl[[3]][[i]],sequences_pas_refSeqEnsembl[[4]][[i]])
+  sequences_UTRseqs[[i]] = c(sequences_pas_refSeqEnsembl[[1]][categories[i]],sequences_pas_refSeqEnsembl[[2]][categories[i]],sequences_pas_refSeqEnsembl[[3]][categories[i]],sequences_pas_refSeqEnsembl[[4]][categories[i]])
 }
 
-
+sequences_UTRseqs = lapply(sequences_UTRseqs,function(x) as.character(do.call(c,x)))
 #### we merge the last two categories as there are not enough entries very often in categories >0.96. 
 
 #lastTeoMerged = c(sequences_UTRseqs[[8]],sequences_UTRseqs[[9]])
@@ -245,10 +246,12 @@ for(i in 1:length(sequences_pas_refSeqEnsembl[[1]])){
 names(sequences_UTRseqs) = c(names(sequences_pas[[1]][1:7]),">0.84")
 
 
+
+
+
 ################################# the following plots are for PAS containing ends #########################
 
 ### plotting each of the categories in a separate plot
-
 
 for(i in 1:length(sequences_UTRseqs)){
   pdf(paste0(OutPath, "/pasContaining_",names(sequences_UTRseqs)[[i]],".pdf"),height=5,width=10)
@@ -284,8 +287,9 @@ names(sequences_Nopas_refSeqEnsembl) = c("refSeq","ensembl")
 sequences_UTRseqs_noPAS = vector("list",8)
 names(sequences_UTRseqs_noPAS) = names(sequences_noPas[[1]])
 for(i in 1:length(sequences_Nopas_refSeqEnsembl[[1]])){
-  sequences_UTRseqs_noPAS[[i]] = c(sequences_Nopas_refSeqEnsembl[[1]][[i]],sequences_Nopas_refSeqEnsembl[[2]][[i]])
+  sequences_UTRseqs_noPAS[[i]] = c(sequences_Nopas_refSeqEnsembl[[1]][categories[i]],sequences_Nopas_refSeqEnsembl[[2]][categories[i]])
 }
+sequences_UTRseqs_noPAS = lapply(sequences_UTRseqs_noPAS,function(x) as.character(do.call(c,x)))
 
 #lastTeoMerged = c(sequences_UTRseqs_noPAS[[8]],sequences_UTRseqs_noPAS[[9]])
 

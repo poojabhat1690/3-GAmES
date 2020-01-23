@@ -1,0 +1,10 @@
+the adapter trimmed has the sequence AGATCGGAAGAGCACACGTCTGAACTCCAGTCACNNNNNNATCTCGTATGCCGTCTTCTGCTTG
+the input directory containing QuantSeq data is /groups/ameres/Pooja/Projects/refiningPipeline/pipeline/testData/finalTest/
+the output directory is /scratch/pooja/finalCheck_3/
+the genome is specified in /groups/ameres/bioinformatics/references/danio_rerio/dr11/danRer11.fa
+the threshold to consider priming sites is 2
+the ensembl directory specified is annotations_all/
+the rnaseq mode is p
+the condition is trial
+the pipeline is here ../../3GAmES/
+Stopping after running all

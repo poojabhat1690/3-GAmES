@@ -95,7 +95,7 @@ onlyIntergenic_bed = onlyIntergenic[,c(1:6)]
 ## writing the tables
 
 
-system(paste0("mkdir ", BOut, "/final90percent"))
+#system(paste0("mkdir ", BOut, "/final90percent"))
 write.table(totalPeaks_bed,paste0(BOut, "/final90percent/ends_greater90percent_intergenic_n100.bed"),sep="\t", quote=F, row.names=F,col.names=F)
 write.table(totalPeaks,paste0(BOut, "/final90percent/ends_greater90percent_intergenic_n100.txt"),sep="\t",row.names = F,quote = F)
 

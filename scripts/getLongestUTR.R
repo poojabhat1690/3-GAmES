@@ -39,28 +39,14 @@ colnames(ensemblTrans) <- c("chr", "start", "end", "gid", "strand", "tid")
 
 allTrans = rbind(refSeqTranscr,ensemblTrans)
 allTrans$start <- allTrans$start + 1
+library(dplyr)
+allTrans %>% dplyr::group_by(gid) %>% dplyr::mutate(maxStart = ifelse(strand=="+",start,min(start)) )%>% 
+  dplyr::mutate(maxEnd = ifelse(strand=="+",max(end),end) ) %>% dplyr::mutate(start = maxStart,end=maxEnd) %>% 
+  dplyr::select(c("chr", "start", "end", "gid", "strand", "tid"))
+allTrans = allTrans[!duplicated(allTrans$gid),]
 
-gid <- allTrans %>% dplyr::group_by(gid) %>% dplyr::summarize(uid = paste(gid, tid, sep = ",", collapse = '|')) %>% as.data.frame
-allTrans <- merge(allTrans, gid, by = "gid")
-
-#### getting the most distal end for minus strand 
-
-allTrans_minus = allTrans[allTrans$strand=="-",]
-allTrans_minus = split(allTrans_minus,allTrans_minus$uid,T)
-allTrans_minus = lapply(allTrans_minus,function(x) x[order(x$start,decreasing = F),])
-allTrans_minus = lapply(allTrans_minus,function(x) x[1,])
-allTrans_minus = do.call(rbind.data.frame,allTrans_minus)
-
-allTrans_plus = allTrans[allTrans$strand=="+",]
-allTrans_plus = split(allTrans_plus,allTrans_plus$uid,T)
-allTrans_plus = lapply(allTrans_plus,function(x) x[order(x$end,decreasing = T),])
-allTrans_plus = lapply(allTrans_plus,function(x) x[1,])
-allTrans_plus = do.call(rbind.data.frame,allTrans_plus)
-
-
-allTrans = rbind.data.frame(allTrans_plus,allTrans_minus)
 allTrans$score=0
-allTrans = allTrans[,c('chr','start','end','gid','score','strand','uid')]
+allTrans = allTrans[,c('chr','start','end','gid','score','strand','tid')]
 write.table(allTrans,paste0(OutPath, "/toExtend_longestEnsembl_refSeq_n100.txt"),quote = F,sep="\t",row.names = F,col.names = F)
 write.table(allTrans,paste0(OutPath, "/toExtend_longestEnsembl_refSeq_n100.bed"),quote = F,sep="\t",row.names = F,col.names = F)
 
