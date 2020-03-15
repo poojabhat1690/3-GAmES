@@ -863,29 +863,29 @@ if [ $? -eq 0 ]
 
 ##### pre-processing data...
 
-#mkdir -p $ovalue/pre-processingLogs
-#cp "$ovalue"/polyAmapping_allTimepoints/logs/*  $ovalue/pre-processingLogs/
-#rm -r "$ovalue"/polyAmapping_allTimepoints
+mkdir -p $ovalue/pre-processingLogs
+cp "$ovalue"/polyAmapping_allTimepoints/logs/*  $ovalue/pre-processingLogs/
+rm -r "$ovalue"/polyAmapping_allTimepoints
 
 ##### coverage (redundant - not used anymore)
-#rm -r "$ovalue"/coverage
-#rm -r "$ovalue"/intergenicPeaks
-#rm -r "$ovalue"/ExtendingINtergenicRegions
+rm -r "$ovalue"/coverage
+rm -r "$ovalue"/intergenicPeaks
+rm -r "$ovalue"/ExtendingINtergenicRegions
 
 
 #### final 3' end annotations
-#mkdir -p $ovalue/finalEnds
-#cp "$ovalue"/final90percent/ends_greater90percent_intergenic_n100.bed "$ovalue"/finalEnds/highConfidenceEnds.bed
-#cp "$ovalue"/final90percent/allAnnotations.bed "$ovalue"/finalEnds/countingWindows.bed
-#cp "$ovalue"/final90percent/countingWindows_transcriptionalOutput.bed "$ovalue"/finalEnds/countingWindows_transcriptionalOutput.bed
-#cp "$ovalue"/final90percent/onlyIntergenic_90percent_n100.bed "$ovalue"/finalEnds/highConfidenceIntergenicEnds.bed
+mkdir -p $ovalue/finalEnds
+cp "$ovalue"/final90percent/ends_greater90percent_intergenic_n100.bed "$ovalue"/finalEnds/highConfidenceEnds.bed
+cp "$ovalue"/final90percent/allAnnotations.bed "$ovalue"/finalEnds/countingWindows.bed
+cp "$ovalue"/final90percent/countingWindows_transcriptionalOutput.bed "$ovalue"/finalEnds/countingWindows_transcriptionalOutput.bed
+cp "$ovalue"/final90percent/onlyIntergenic_90percent_n100.bed "$ovalue"/finalEnds/highConfidenceIntergenicEnds.bed
 
-#rm -r "$ovalue"/final90percent
+rm -r "$ovalue"/final90percent
 
 #### PAS plots
-#mkdir -p $ovalue/nucleotideProfiles
- #cp "$ovalue"/PASplot/belowAboveThreshold.pdf  $ovalue/nucleotideProfiles
-#rm -r  "$ovalue"/PASplot/
+mkdir -p $ovalue/nucleotideProfiles
+ cp "$ovalue"/PASplot/belowAboveThreshold.pdf  $ovalue/nucleotideProfiles
+rm -r  "$ovalue"/PASplot/
 
 echo "Finished cleaning up....."
 
