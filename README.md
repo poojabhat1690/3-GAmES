@@ -105,11 +105,11 @@ The final output and all intermediate files are organized in the following folde
 #### PASplots:
 Contains nucleotide profiles for priming sites overlapping with annotations, sparated by presence or absence of the poly A signal (PAS) and separated by downstream genomic A content. 
 
-#### test data - Zebrafish 1 day post fertilization
+## test data - Zebrafish 1 day post fertilization
 
- 1. 3' end sequencing data (1dpf) can be downloaded from the GEO database.  (insert GEO accession here)
- 2. Optionally RNAseq data from the same stage can be downloaded (GEO) and mapped using STAR-2.5.2b and indexed using samtools/1.9. 
- 3. Annotations required to run 3' GAmES are on the git.  
+ 1. 3' end sequencing data (1dpf) can be downloaded from the GEO database (GSE146738).
+ 2. Optionally RNAseq data from the same stage can be downloaded (SRR372798, SRR372799) and mapped and indexed using standard tools (example : mapping using STAR and indexing using samtools). 
+ 3. Annotations required to run 3' GAmES are on the git (https://github.com/poojabhat1690/3-GAmES/tree/master/testdata/annotations/)
 
 ## Contact
 Pooja Bhat (pooja.bhat@imba.oeaw.ac.at)        
