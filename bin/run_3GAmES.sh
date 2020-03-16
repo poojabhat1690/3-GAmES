@@ -143,6 +143,7 @@ mkdir -p "$QUANT_PASPLOTS"
 mkdir -p "$QUANT_INTERGENIC"
 mkdir -p $ovalue/ExtendingINtergenicRegions
 mkdir -p $ovalue/coverage
+mkdir -p $ovalue/final90percent
 
 
 ### create a log file... 
@@ -499,6 +500,7 @@ fi
 
 
 
+
 	 singularity exec "$PIPELINE"/bin/dependencies_latest.sif  bedtools bamtobed -i $QUANT_MAP/"$index"_5primetrimmed_trimmed_sizefiltered_polyAreads_polyAremoved_slamdunk_mapped_filtered.bam  > $QUANT_MAP/"$index"_5primetrimmed_trimmed_sizefiltered_polyAreads_polyAremoved_slamdunk_mapped.bam_bamTobed.bed 
 	
 		if [ $? -eq 0 ]
@@ -770,7 +772,36 @@ rm $ovalue/coverage/*
 			fi
 
 	else
-			echo "the rnaseq directory does not exist. Running the analysis without intergenic end identification" >>  "$ovalue"/"$Condition".txt  
+			
+		  rmd="$PIPELINE/scripts/getLongestUTR.R"
+
+	                singularity exec "$PIPELINE"/bin/dependencies_latest.sif  Rscript --slave -e "PPath='$PIPELINE'; InPath='$QUANT_MAP'; OutPath='$QUANT_INTERGENIC'; ensemblDir='$ensembldir';source('$rmd')"
+	                              
+		                         if [ $? -eq 0 ]
+					       then
+								echo ""
+						else
+							echo " ERR: the script getLongestUTR returned an error">> "$ovalue"/"$Condition".txt
+						exit 1
+					fi
+  	sort -k1,1 -k2,2n $QUANT_INTERGENIC/allExons_refSeq_ensembl.bed > $QUANT_INTERGENIC//allExons_refSeq_ensembl_sorted.bed
+
+                  ### this is the bed file of the most distal 3' position per gene. 
+	sort -k1,1 -k2,2n $QUANT_INTERGENIC/toExtend_longestEnsembl_refSeq_n100.bed > $QUANT_INTERGENIC/toExtend_longestEnsembl_refSeq_n100_sorted.bed
+
+			                 ##### we want to calculate the distance between the most distal 3' end per gene and the next annotation (ensembl), to prevent considering RNAseq singal coming from another annotation. 
+
+				  singularity exec "$PIPELINE"/bin/dependencies_latest.sif  bedtools closest -d -s -io -iu -D a -a $QUANT_INTERGENIC/toExtend_longestEnsembl_refSeq_n100_sorted.bed -b $QUANT_INTERGENIC/allExons_refSeq_ensembl_sorted.bed > $QUANT_INTERGENIC/toExtend_longestEnsembl_refSeq_n100_sorted_distances.bed
+						                        
+
+
+
+
+		echo "the rnaseq directory does not exist. Running the analysis without intergenic end identification" >>  "$ovalue"/"$Condition".txt  
+		singularity exec "$PIPELINE"/bin/dependencies_latest.sif Rscript  --slave -e "BOut='$ovalue';source('"$PIPELINE"/scripts/writePassingNonOverlappingEnds.R')"
+		singularity exec "$PIPELINE"/bin/dependencies_latest.sif bedtools sort -i "$ovalue"/polyAmapping_allTimepoints/n_100_global_a0/nonOverlapping_total_passing.bed > "$ovalue"/polyAmapping_allTimepoints/n_100_global_a0/nonOverlapping_total_passing_sorted.bed
+		singularity exec "$PIPELINE"/bin/dependencies_latest.sif bedtools closest -d -s -io   -a "$ovalue"/polyAmapping_allTimepoints/n_100_global_a0/nonOverlapping_total_passing_sorted.bed -b "$ovalue"/intergenicPeaks/toExtend_longestEnsembl_refSeq_n100_sorted_distances.bed > "$ovalue"/intergenicPeaks/intergenicPeaks_noRNAseq.bed
+
 
 	fi
 
