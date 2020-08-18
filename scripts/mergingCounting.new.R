@@ -13,11 +13,11 @@ colnames(annotation_custom) = paste("V",c(1:8),sep="")
 
 
 
-allEnsembl = read.table(paste0(ensemblDir,"/transcriptStartsAndEnds_all.txt"),sep="\t",header=F,stringsAsFactors = F)
+allEnsembl = read.table(paste0(ensemblDir,"/refSeq_mrna_utrsPresent.bed"),sep="\t",header=F,stringsAsFactors = F)
 
 
-classesToInclude = c("antisense", "bidrectional_promoter_lncRNA", "lincRNA", "macro_lncRNA", "processed_transcript", "sense_intronic", "sense_overlapping","protein_coding")
-allEnsembl = allEnsembl[allEnsembl$V8 %in% classesToInclude,]
+#classesToInclude = c("antisense", "bidrectional_promoter_lncRNA", "lincRNA", "macro_lncRNA", "processed_transcript", "sense_intronic", "sense_overlapping","protein_coding")
+#allEnsembl = allEnsembl[allEnsembl$V8 %in% classesToInclude,]
 
 ### not including these anymore but just including long non-coding RNAs from ensembl
 
@@ -112,7 +112,7 @@ allAnnotations_minus_ranges_reduced_df = do.call(rbind,allAnnotations_minus_rang
 
 allAnnotations = rbind(allAnnotations_plus_ranges_reduced_df,allAnnotations_minus_ranges_reduced_df)
 
-### converting back to 0 based annotations : 
+### converting back to 0 based annotations :
 
 allAnnotations$starts = allAnnotations$starts -1
 
@@ -152,7 +152,7 @@ total_negative$V2 = total_negative$V2 + 1
 
 
 
-### positive strand 
+### positive strand
 
 total_positive_split = split(total_positive,f = total_positive$V4,drop = T )
 
@@ -170,7 +170,7 @@ total_positive_reduced_df = lapply(total_positive_reduced,function(x) reducedToD
 total_positive_reduced_df = do.call(rbind,total_positive_reduced_df)
 
 
-####### negative strand 
+####### negative strand
 
 
 
@@ -194,6 +194,3 @@ countingWindowsTranscriptionalOutput$starts = countingWindowsTranscriptionalOutp
 
 
 write.table(countingWindowsTranscriptionalOutput,paste0(BOut, "/final90percent/countingWindows_transcriptionalOutput.bed"),sep="\t",quote = F,row.names = F,col.names = F)
-
-
-
