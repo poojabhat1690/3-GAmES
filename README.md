@@ -74,6 +74,8 @@ run_3GAmES.sh -a [adapter] -i [input directory] -o [output directory] -g [genome
  	-i Input directory containing two folders named - quantseq, rnaseq
                    quantseq: contains *.fastq, *.fq.gz, *fq  files. 
                    rnaseq: mapped, sorted and indexed bam files. 
+	
+	-g genome file in fasta format
  
  	-o Output directory
  
