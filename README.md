@@ -66,7 +66,7 @@ All the above annotations can be obtained from the UCSC table browser:
 The script required to run the whole pipeline is run_3GAmES.sh. You will find this in the 3GAmES/bin/
 
 run_3GAmES.sh -a [adapter] -i [input directory] -o [output directory] -g [genome file] -t [threshold for priming sites]
--u [ucscDir] -e [ensemblDir] -m [mode rnaseq p/s/S] -c [condition] -p [path]
+-e [ensemblDir] -m [mode rnaseq p/s/S] -c [condition] -p [path] -s [stop after this]
  
  
  	-a 3' Adapter sequences that has to be removed using cutadapt
